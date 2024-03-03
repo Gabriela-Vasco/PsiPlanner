@@ -1,23 +1,33 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import DashboardView from '../views/DashboardView.vue'
+import ProntuariosView from '../views/ProntuariosView.vue'
+import AgendaView from '../views/AgendaView.vue'
+import FinanceiroView from '../views/FinanceiroView.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'dashboard-view',
+    component: DashboardView
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
+    path: '/agenda',
+    name: 'agenda-view',
+    component: AgendaView
+  },
+  {
+    path: '/prontuarios',
+    name: 'prontuarios-view',
+    component: ProntuariosView
+  },
+  {
+    path: '/financeiro',
+    name: 'financeiro-view',
+    component: FinanceiroView
+  },
 ]
 
 const router = new VueRouter({
