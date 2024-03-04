@@ -10,15 +10,13 @@ export default {
 </script>
 
 <template>
-<v-app-bar elevation="1" app class="d-flex justify-content-between align-center">
-    <div style="margin-right: 80vw">
-      <v-toolbar-title >PsiPlanner</v-toolbar-title>
-    </div>
-    <div class="d-flex align-center justify-content-between">
+  <header class="d-flex justify-content-between align-items-center py-10 px-10 border-primary bg-primary">
+    <h1>PsiPlanner</h1>
+    <div class="d-flex justify-content-center align-items-center">
       <h2 class="mr-2">Olá, {{ userName }}</h2>
       <v-avatar color="indigo">
         <v-icon dark>mdi-account-circle</v-icon>
       </v-avatar>
     </div>
-  </v-app-bar>
+  </header>
 </template>
