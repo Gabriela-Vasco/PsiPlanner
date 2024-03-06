@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import DashboardView from '../views/DashboardView.vue'
-import ProntuariosView from '../views/ProntuariosView.vue'
+import ClientesView from '../views/ClientesView.vue'
 import AgendaView from '../views/AgendaView.vue'
 import FinanceiroView from '../views/FinanceiroView.vue'
 
@@ -19,9 +19,9 @@ const routes = [
     component: AgendaView
   },
   {
-    path: '/prontuarios',
-    name: 'prontuarios-view',
-    component: ProntuariosView
+    path: '/clientes',
+    name: 'clientes-view',
+    component: ClientesView
   },
   {
     path: '/financeiro',

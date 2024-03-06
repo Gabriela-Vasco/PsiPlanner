@@ -6,7 +6,7 @@ export default {
       items: [
           { title: 'Dashboard', icon: 'mdi-home', path: '/' },
           { title: 'Agenda', icon: 'mdi-calendar', path:"/agenda" },
-          { title: 'Prontuários', icon: 'mdi-account', path:"/prontuarios" },
+          { title: 'Clientes', icon: 'mdi-account', path:"/clientes" },
           { title: 'Financeiro', icon: 'mdi-currency-usd', path:"/financeiro" },
         ],
     }
@@ -20,13 +20,12 @@ export default {
       <v-list
         dense
         nav
-        shaped
         class="text-heading-large bg-primary-dark"
       >
       <v-list-item
       v-for="item in items"
       :key="item.title"
-      class="text-heading-large my-2 py-2 hover-item"
+      class="text-heading-large my-1 py-1 hover-item"
       >
       <v-list-item-content >
           <router-link :to="item.path" class="d-flex">
