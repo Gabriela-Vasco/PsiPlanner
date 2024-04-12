@@ -1,14 +1,32 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import AgendaView from '../modules/agenda/AgendaView'
+import DashboardView from '../modules/dashboard/DashboardView'
+import ClientsView from '../modules/clients/ClientsView'
+import FinancesView from '../modules/finances/FinancesView'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'dashboard',
+    component: DashboardView
+  },
+  {
+    path: '/agenda',
+    name: 'agenda',
+    component: AgendaView
+  },
+  {
+    path: '/clientes',
+    name: 'clientes',
+    component: ClientsView
+  },
+  {
+    path: '/financeiro',
+    name: 'financeiro',
+    component: FinancesView
   }
 ]
 

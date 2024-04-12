@@ -1,55 +1,35 @@
+<script>
+import GlobalHeader from '@/components/GlobalHeader.vue'
+import Navbar from '@/components/Navbar.vue'
+export default {
+  name: 'App',
+  components: {
+    Navbar,
+    GlobalHeader
+  }
+}
+</script>
 <template>
-  <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
-
+  <v-app  id="app">
+    <GlobalHeader />
     <v-main>
-      <router-view/>
+      <v-container fluid>
+        <v-row>
+          <v-col cols="2">
+            <Navbar />
+          </v-col>
+          <v-col cols="10">
+            <router-view></router-view>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-main>
+    <v-footer app>
+    </v-footer>
   </v-app>
 </template>
 
-<script>
-
-export default {
-  name: 'App',
-
-  data: () => ({
-    //
-  })
-}
-</script>
+<style lang="sass">
+@import './style/index.sass'
+@import './style/style'
+</style>

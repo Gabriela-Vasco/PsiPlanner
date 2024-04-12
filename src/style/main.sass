@@ -1,0 +1,99 @@
+$body-font-family: 'Sarabun', sans-serif !default
+$font-size-root: rem(16px) !default
+
+@import '~vuetify/src/styles/main'
+
+$expansion-panel-border-radius: 3px !default
+$expansion-panel-header-font-size: rem(16px) !default
+$expansion-panel-active-margin: 20px !default
+$expansion-panel-header-min-height: 70px !default
+$expansion-panel-content-padding: 0 20px 30px !default
+@import '~vuetify/src/components/VExpansionPanel/_variables'
+.v-expansion-panel
+  margin-top: 20px
+  &:before
+    box-shadow: 0 3px 6px 0 rgba(var(--secondary), 0.13)
+  &:not(:first-child):after
+    border-top: none
+  &--active
+    > .v-expansion-panel-header--active .v-expansion-panel-header__icon
+      &:not(.v-expansion-panel-header__icon--disable-rotate) .v-icon
+        transform: rotate(-135deg)
+.v-expansion-panel-header
+  min-height: $expansion-panel-header-min-height
+
+  font-size: rem(16px)
+  font-weight: bold
+  line-height: 1
+  color: var(--dark)
+  transition: background-color 0.3s ease
+  &:hover
+    background-color: #f2f2f2
+.v-expansion-panel
+  -webkit-box-shadow: 0 3px 3px -2px rgba(0,0,0,.2),0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12)!important
+  box-shadow: 0 3px 3px -2px rgba(0,0,0,.2),0 3px 4px 0 rgba(0,0,0,.14),0 1px 8px 0 rgba(0,0,0,.12)!important
+
+$dialog-border-radius: 3px !default
+@import '~vuetify/src/components/VDialog/_variables'
+
+// @import '~vuetify/src/components/VTextField/VTextField'
+.v-text-field
+  &--filled,
+  &--full-width,
+  &--outlined
+    &:not(.v-textarea) > .v-input__control > .v-input__slot
+      min-height: 42px !important
+      max-height: 42px
+      input
+        min-height: 42px !important
+        max-height: 42px
+        margin-top: 1px !important
+    // &.v-text-field--single-line
+      // input
+        // margin-top: 6px
+
+.v-label.theme--light
+  color: #4E5161
+  font-size: 0.75rem
+  line-height: 100%
+  font-weight: 600
+  font-family: 'Open Sans', 'GeneralSans', 'ProximaNova'
+.v-text-field__slot input,
+.v-select__selection,
+.v-select__slot input
+  color: #030309 !important
+  font-size: 0.875rem
+  font-weight: 400
+  &::placeholder
+    color: rgba(106, 112, 134, .4) !important
+// Fix label on switch with inset
+.v-input--switch--inset
+  .v-label
+    font-weight: 400
+    font-size: 0.75rem
+    line-height: 100%
+    color: #4E5161
+.no-border .v-input__slot::before
+  border-style: none !important
+
+.theme--light.v-data-table thead tr th
+  font-family: 'GeneralSans'
+  font-weight: 700
+  font-size: rem(12px)
+  line-height: rem(20px)
+  color: #030309
+.v-data-table td
+  font-family: 'GeneralSans', 'ProximaNova'
+  font-weight: 600
+  color: #8E8E8E
+  font-size: rem(14px)
+  line-height: rem(20px)
+
+strong
+  font-weight: 700
+
+.v-date-picker-table
+  height: auto
+
+.mouse-hover:hover
+    cursor: pointer
