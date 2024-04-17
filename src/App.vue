@@ -1,11 +1,13 @@
 <script>
 import GlobalHeader from '@/components/GlobalHeader.vue'
+import GlobalFooter from '@/components/GlobalFooter.vue'
 import Navbar from '@/components/Navbar.vue'
 export default {
   name: 'App',
   components: {
     Navbar,
-    GlobalHeader
+    GlobalHeader,
+    GlobalFooter
   }
 }
 </script>
@@ -24,8 +26,7 @@ export default {
         </v-row>
       </v-container>
     </v-main>
-    <v-footer app>
-    </v-footer>
+    <GlobalFooter />
   </v-app>
 </template>
 

@@ -11,7 +11,7 @@ export default {
 </script>
 
 <template>
-  <header class="d-flex justify-content-between align-items-center py-10 px-10 border-primary bg-primary">
+  <header class="d-flex justify-content-between align-items-center py-10 bg-primary">
     <div class="d-flex align-items-center">
         <img src="../assets/logo.svg" alt="logo">
         <h1 class="ml-3">PsiPlanner</h1>

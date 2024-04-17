@@ -21,19 +21,19 @@ export default {
       <v-list
         dense
         nav
-        class="text-heading-large bg-primary-dark"
+        class="bg-primary-dark"
       >
       <v-list-item
       v-for="item in items"
       :key="item.title"
-      class="text-heading-large my-1 py-1 hover-item"
+      class="my-4 py-1 hover-item"
       >
       <v-list-item-content >
           <router-link :to="item.path" class="d-flex">
             <v-list-item-icon>
               <v-icon color="white">{{ item.icon }}</v-icon>
             </v-list-item-icon>
-              <v-list-item-title class="text-white ">{{ item.title }}</v-list-item-title>
+              <v-list-item-title class="text-white py-2 font-regular" style="font-size: 20px">{{ item.title }}</v-list-item-title>
             </router-link>
             </v-list-item-content>
         </v-list-item>

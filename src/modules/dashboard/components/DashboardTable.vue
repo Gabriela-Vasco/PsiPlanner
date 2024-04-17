@@ -1,19 +1,18 @@
 <script>
-/* eslint-disable */
+// eslint-disable vue/valid-v-slot
 export default {
-    props: {
-        headers: {
-            type: Array, default: () => []
-        },
-        items: {
-            type: Array, default: () => []
-        }
+  props: {
+    headers: {
+      type: Array, default: () => []
+    },
+    items: {
+      type: Array, default: () => []
     }
-    
+  }
 }
 </script>
 <template>
-    <div class="table-bills-to-pay">
+    <div class="data-table w-60">
         <v-data-table
             :headers="headers"
             :items="items"
@@ -21,6 +20,7 @@ export default {
             <template v-slot:item.id_client="{ item }">
                 {{ item.id_client || ' - ' }}
             </template>
+            // eslint-disable-next-line vue/valid-v-slot
             <template v-slot:item.appointment_time="{ item }">
                 {{ item.appointment_time || ' - ' }}
             </template>
@@ -59,23 +59,3 @@ export default {
         </v-data-table>
     </div>
 </template>
-
-<style lang="sass">
-.table-bills-to-pay
-  .v-data-table__wrapper
-    table
-      thead
-        th
-          border-bottom: 0 !important
-      tbody
-        tr:nth-child(even)
-          background-color: #f4f4f4
-        td
-          border-right: 1px solid rgba(0, 0, 0, 0.12)
-          font-weight: 500
-          color: #5E5E5E
-          font-size: 12px
-
-        td:last-child
-          border-right: 0
-</style>

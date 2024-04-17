@@ -24,19 +24,23 @@ export default {
         },
         {
           text: 'Horário',
-          value: 'appointment_time'
+          value: 'appointment_time',
+          align: 'center'
         },
         {
           text: 'Confirmação',
-          value: 'confirmation'
+          value: 'confirmation',
+          align: 'center'
         },
         {
           text: 'Pagamento',
-          value: 'payment'
+          value: 'payment',
+          align: 'center'
         },
         {
           text: 'Anotações',
-          value: 'anotations'
+          value: 'anotations',
+          align: 'center'
         }
       ],
       items: [{
