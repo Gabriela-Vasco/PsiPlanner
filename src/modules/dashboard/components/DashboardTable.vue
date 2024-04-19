@@ -12,8 +12,9 @@ export default {
 }
 </script>
 <template>
-    <div class="data-table w-60">
+    <div class="w-60">
         <v-data-table
+            class="data-table"
             :headers="headers"
             :items="items"
         >
@@ -50,12 +51,16 @@ export default {
                     <v-btn
                         small
                         rounded
-                        color="blue"
+                        color="#83cfcb"
                     >
-                        <v-icon color="white">mdi-file-document-edit-outline</v-icon>
+                        <v-icon>mdi-file-document-edit-outline</v-icon>
                     </v-btn>
                 </div>
             </template>
         </v-data-table>
     </div>
 </template>
+
+<style lang="sass" scoped>
+@import 'src/style/components/data-table.sass'
+</style>

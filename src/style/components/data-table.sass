@@ -1,14 +1,20 @@
+@import '../_vars.sass'
 .data-table
+  border: 1px solid $primary !important
   .v-data-table__wrapper
     table
+      border-bottom: 1px solid $primary !important
       thead
+        background-color: $primary-light !important
         th
-          border-bottom: 0 !important
+          font-size: 0.95em !important
+          border-bottom: 1px solid $primary !important
       tbody
         tr:nth-child(even)
-          background-color: #f4f4f4
+          background-color: $primary-light !important
+        tr:hover
+            background-color: $primary-light !important
         td
-          border-right: 1px solid rgba(0, 0, 0, 0.12)
           font-weight: 500
           color: #5E5E5E
           font-size: 12px
