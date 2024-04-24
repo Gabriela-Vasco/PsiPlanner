@@ -22,7 +22,7 @@ export default {
         },
         {
           text: 'Horário',
-          value: 'appointment_time ',
+          value: 'appointment_time',
           align: 'center'
         },
         {
@@ -44,23 +44,23 @@ export default {
       items: [
         {
           client_name: 'Maria Machado',
-          start_date: '2024-04-15',
-          appointment_time: '10:00',
+          start_date: '17/04/2024',
+          appointment_time: '9:00',
           payment_value: 100.00,
           active: true
         },
         {
           client_name: 'Julia Pereira',
-          start_date: '2024-04-16',
-          appointment_time: '14:30',
+          start_date: '17/04/2024',
+          appointment_time: '9:00',
           payment_value: 120.00,
           active: true
         },
         {
           client_name: 'Larissa Silva',
-          start_date: '2024-04-17',
-          appointment_time: '09:45',
-          payment_value: 90.00,
+          start_date: '17/04/2024',
+          appointment_time: '9:00',
+          payment_value: 90.50,
           active: false
         }
       ]
@@ -68,13 +68,16 @@ export default {
   }
 }
 </script>
-
 <template>
     <v-card class="d-flex flex-column align-items-center my-10 h-100vh">
+        <v-btn text outlined class="mt-10 mr-10 align-self-end btn-primary-dark white--text">
+          <v-icon>mdi-plus</v-icon>
+          Novo cliente
+        </v-btn>
         <ClientsTable
             :headers="headers"
             :items="items"
-            class='mb-10 mt-5rem'
+            class='mb-10 mt-5'
         />
     </v-card>
 </template>

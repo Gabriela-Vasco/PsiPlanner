@@ -1,5 +1,4 @@
 <script>
-// eslint-disable vue/valid-v-slot
 export default {
   props: {
     headers: {
@@ -7,6 +6,16 @@ export default {
     },
     items: {
       type: Array, default: () => []
+    }
+  },
+
+  methods: {
+    formatMoney (money) {
+      if (Number.isInteger(money)) {
+        return 'R$ ' + String(money) + ',00'
+      } else {
+        return 'R$ ' + String(money).replace('.', ',').padEnd(5, '0')
+      }
     }
   }
 }
@@ -24,11 +33,11 @@ export default {
             <template v-slot:item.start_date="{ item }">
                 {{ item.start_date || ' - ' }}
             </template>
-            <template v-slot:item.appointment_time="{ item }">
-                {{ item.appointment_time || ' - ' }}
+            <template v-slot:item.time="{ item }">
+                {{ item.time || ' - ' }}
             </template>
             <template v-slot:item.payment_value="{ item }">
-                {{ item.payment_value || ' - ' }}
+                {{ formatMoney(item.payment_value) || ' - ' }}
             </template>
             <template v-slot:item.active="{ item }">
                 <v-chip
