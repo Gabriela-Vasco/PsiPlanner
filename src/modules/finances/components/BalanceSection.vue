@@ -1,5 +1,19 @@
 <script>
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale
+} from 'chart.js'
+import { Bar } from 'vue-chartjs'
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 export default {
+  components: {
+    Bar
+  },
   data () {
     return {
       months: [
@@ -16,7 +30,38 @@ export default {
         'Novembro',
         'Dezembro'
       ],
-      month: ''
+      month: '',
+      data: {
+        labels: [
+          'Janeiro',
+          'Fevereiro',
+          'Março',
+          'Abril',
+          'Maio',
+          'Junho',
+          'Julho',
+          'Agosto',
+          'Setembro',
+          'Outubro',
+          'Novembro',
+          'Dezembro'
+        ],
+        datasets: [
+          {
+            label: 'Entradas',
+            backgroundColor: '#71F79F',
+            data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
+          },
+          {
+            label: 'Despesas',
+            backgroundColor: '#F2542D',
+            data: [39, 80, 40, 20, 12, 12, 11, 12, 39, 10, 40, 39]
+          }
+        ]
+      },
+      options: {
+        responsive: true
+      }
     }
   }
 }
@@ -73,7 +118,8 @@ export default {
         </div>
 
         <div style='border: 1px solid #3DCCC7' class="pa-5 my-10 mx-5">
-            Grafico
+            <Bar :data="data" :options="options" width="500px"
+    height="180px"/>
         </div>
     </div>
 </template>

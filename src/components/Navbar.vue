@@ -9,6 +9,7 @@ export default {
           { title: 'Agenda', icon: 'mdi-calendar', path:"/agenda" },
           { title: 'Clientes', icon: 'mdi-account', path:"/clientes" },
           { title: 'Financeiro', icon: 'mdi-currency-usd', path:"/financeiro" },
+          { title: 'Arquivos', icon: 'mdi-folder-text', path:"/arquivos" },
         ],
     }
   }
