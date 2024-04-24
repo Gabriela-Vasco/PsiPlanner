@@ -8,17 +8,22 @@ export default {
     Navbar,
     GlobalHeader,
     GlobalFooter
+  },
+  mounted () {
+    console.log(this.$route)
   }
 }
 </script>
 <template>
-  <v-app  id="app">
-    <GlobalHeader />
+  <v-app  id="app" class="ma-0 pa-0">
+    <GlobalHeader
+      v-if="this.$route.name != 'login'"
+      />
     <v-main>
       <v-container fluid>
         <v-row>
           <v-col cols="2">
-            <Navbar />
+            <Navbar v-if="this.$route.name != 'login'" />
           </v-col>
           <v-col cols="10">
             <router-view></router-view>
@@ -26,7 +31,7 @@ export default {
         </v-row>
       </v-container>
     </v-main>
-    <GlobalFooter />
+    <GlobalFooter v-if="this.$route.name != 'login'" />
   </v-app>
 </template>
 
