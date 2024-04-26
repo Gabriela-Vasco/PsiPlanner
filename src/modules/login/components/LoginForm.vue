@@ -56,6 +56,6 @@ export default {
       <span class="text-md">F</span>
       <span class="text-md text-lowercase">azer o login</span>
     </v-btn>
-    <small class="text-color-1000">Não possui conta? <a href="/cadastro" class="font-weight-bold text-black">Criar conta</a></small>
+    <small class="text-color-1000">Não possui conta? <router-link to="/cadastro" class="font-weight-bold text-black">Criar conta</router-link></small>
   </div>
 </template>
