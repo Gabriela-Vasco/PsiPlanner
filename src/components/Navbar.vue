@@ -5,7 +5,7 @@ export default {
   data(){
     return {
       items: [
-          { title: 'Dashboard', icon: 'mdi-home', path: '/' },
+          { title: 'Dashboard', icon: 'mdi-home', path: '/]' },
           { title: 'Agenda', icon: 'mdi-calendar', path:"/agenda" },
           { title: 'Clientes', icon: 'mdi-account', path:"/clientes" },
           { title: 'Financeiro', icon: 'mdi-currency-usd', path:"/financeiro" },

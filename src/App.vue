@@ -9,29 +9,38 @@ export default {
     GlobalHeader,
     GlobalFooter
   },
+  data () {
+    return {
+      showLayoutDefault: true
+    }
+  },
   mounted () {
-    console.log(this.$route)
+    if (this.$route.name !== 'login' || this.$route.name !== 'cadastro') {
+      this.showLayoutDefault = false
+    } else {
+      this.showLayoutDefault = true
+    }
   }
 }
 </script>
 <template>
-  <v-app  id="app" class="ma-0 pa-0">
+  <v-app  id="app" class="ma-0 pa-0 h-screen">
     <GlobalHeader
-      v-if="this.$route.name != 'login'"
+      v-if="showLayoutDefault"
       />
-    <v-main>
-      <v-container fluid>
+    <v-main class="ma-0 pa-0 w-100">
+      <v-container fluid class="ma-0 pa-0 w-100">
         <v-row>
-          <v-col cols="2">
-            <Navbar v-if="this.$route.name != 'login'" />
+          <v-col cols="2" v-if="showLayoutDefault">
+            <Navbar />
           </v-col>
-          <v-col cols="10">
+          <v-col :cols="showLayoutDefault ? '10' : '12'">
             <router-view></router-view>
           </v-col>
         </v-row>
       </v-container>
     </v-main>
-    <GlobalFooter v-if="this.$route.name != 'login'" />
+    <GlobalFooter />
   </v-app>
 </template>
 
