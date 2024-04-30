@@ -15,7 +15,7 @@ export default {
 </script>
 <template>
     <div class="d-flex w-100 h-screen">
-        <v-img src="@/assets/login-cover.png" max-height="100vh" class="w-50"/>
+        <v-img src="@/assets/login-cover.png" min-height="100vh" class="w-50"/>
         <div class="d-flex flex-column align-items-end w-50">
           <div class="d-flex align-items-center mt-5 mr-5">
               <img src="../../assets/logo.svg" alt="logo">

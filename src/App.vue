@@ -15,10 +15,8 @@ export default {
     }
   },
   mounted () {
-    if (this.$route.name !== 'login' || this.$route.name !== 'cadastro') {
+    if (this.$route.name === 'login' || this.$route.name === 'cadastro') {
       this.showLayoutDefault = false
-    } else {
-      this.showLayoutDefault = true
     }
   }
 }
