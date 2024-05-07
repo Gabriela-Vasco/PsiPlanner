@@ -1,4 +1,5 @@
 <script>
+import { EventBus } from '@/utils/EventBus.js'
 export default {
   props: {
     headers: {
@@ -8,7 +9,6 @@ export default {
       type: Array, default: () => []
     }
   },
-
   methods: {
     formatMoney (money) {
       if (Number.isInteger(money)) {
@@ -16,6 +16,9 @@ export default {
       } else {
         return 'R$ ' + String(money).replace('.', ',').padEnd(5, '0')
       }
+    },
+    openModal (item) {
+      EventBus.$emit('openItemModal', item)
     }
   }
 }
@@ -46,15 +49,16 @@ export default {
                     {{ item.active? 'Ativo' : 'Inativo' }}
                 </v-chip>
             </template>
-            <template v-slot:item.psychological_records>
+            <template v-slot:item.psychological_records="{ item }">
                 <div class="d-flex justify-content-center">
-                    <v-btn
-                        small
-                        rounded
-                        color="#83cfcb"
-                    >
-                        <v-icon>mdi-file-cabinet</v-icon>
-                    </v-btn>
+                  <v-btn
+                  small
+                  rounded
+                  color="#83cfcb"
+                  @click="openModal(item)"
+                  >
+                    <v-icon>mdi-file-cabinet</v-icon>
+                </v-btn>
                 </div>
             </template>
         </v-data-table>

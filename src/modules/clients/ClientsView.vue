@@ -1,10 +1,12 @@
 <script>
 import ClientsTable from '@/modules/clients/components/ClientsTable.vue'
+import ClientModal from './components/ClientModal.vue'
 
 export default {
   name: 'ClientsView',
   components: {
-    ClientsTable
+    ClientsTable,
+    ClientModal
   },
   data () {
     return {
@@ -63,12 +65,24 @@ export default {
           payment_value: 90.50,
           active: false
         }
-      ]
+      ],
+      modalActive: false,
+      modalText: ''
+    }
+  },
+  methods: {
+    openModal (itemId) {
+      console.log('entrou na view')
+      // Logic to find clicked item and update modal text
+      const foundItem = this.items.find(item => item.id_client === itemId)
+      this.modalText = `You clicked on item: ${foundItem.name}`
+      this.modalActive = true
     }
   }
 }
 </script>
 <template>
+  <div class="pa-0 ma-0">
     <v-card class="d-flex flex-column align-items-center my-10 h-100vh">
         <v-btn text outlined class="mt-10 mr-10 align-self-end btn-primary-dark white--text">
           <v-icon>mdi-plus</v-icon>
@@ -78,6 +92,9 @@ export default {
             :headers="headers"
             :items="items"
             class='mb-10 mt-5'
+            @open-modal="openModal"
         />
     </v-card>
+    <ClientModal />
+  </div>
 </template>
