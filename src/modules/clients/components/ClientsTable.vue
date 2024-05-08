@@ -49,7 +49,20 @@ export default {
                     {{ item.active? 'Ativo' : 'Inativo' }}
                 </v-chip>
             </template>
-            <template v-slot:item.psychological_records="{ item }">
+            <template v-slot:item.actions="{ item }">
+                <div class="d-flex justify-content-center">
+                  <v-btn
+                    small
+                    rounded
+                    icon
+                    color="#0B132B"
+                    @click="openModal(item)"
+                  >
+                      <v-icon>mdi-pencil-circle</v-icon>
+                  </v-btn>
+                </div>
+            </template>
+            <!-- <template v-slot:item.psychological_records="{ item }">
                 <div class="d-flex justify-content-center">
                   <v-btn
                   small
@@ -60,7 +73,7 @@ export default {
                     <v-icon>mdi-file-cabinet</v-icon>
                 </v-btn>
                 </div>
-            </template>
+            </template> -->
         </v-data-table>
     </div>
 </template>

@@ -30,13 +30,13 @@ export default {
                     <v-checkbox
                         v-model="item.confirmation"
                     ></v-checkbox>
-                    <v-btn
+                    <!-- <v-btn
                         v-if="!item.confirmation"
                         icon
                         color="blue"
                     >
                         <v-icon>mdi-whatsapp</v-icon>
-                    </v-btn>
+                    </v-btn> -->
                 </div>
             </template>
             <template v-slot:item.payment="{ item }">
@@ -46,7 +46,7 @@ export default {
                     ></v-checkbox>
                 </div>
             </template>
-            <template v-slot:item.anotations>
+            <!-- <template v-slot:item.anotations>
                 <div class="d-flex justify-content-center">
                     <v-btn
                         small
@@ -56,7 +56,7 @@ export default {
                         <v-icon>mdi-file-document-edit-outline</v-icon>
                     </v-btn>
                 </div>
-            </template>
+            </template> -->
         </v-data-table>
     </div>
 </template>

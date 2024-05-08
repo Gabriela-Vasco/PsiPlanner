@@ -1,5 +1,7 @@
 <script>
 import BillsToPayTable from '@/modules/finances/components/BillsToPayTable.vue'
+import { EventBus } from '@/utils/EventBus.js'
+
 export default {
   components: {
     BillsToPayTable
@@ -36,13 +38,26 @@ export default {
       ],
       items: []
     }
+  },
+  methods: {
+    openModal () {
+      EventBus.$emit('openFinanceModal')
+    }
   }
 }
 </script>
 
 <template>
-    <div>
-        <v-divider class='mb-10'/>
+    <div class="d-flex flex-column">
+        <v-divider class='mb-5'/>
+        <v-btn
+          color="#0B132B"
+          class="mr-10 align-self-end mb-10 white--text"
+          @click="openModal()"
+        >
+          <v-icon class="mr-2">mdi-plus</v-icon>
+          Nova conta a pagar
+        </v-btn>
         <div class="d-flex justify-space-around align-items-center mb-10">
             <div style='border: 1px solid #71F79F' class="pa-5">
                 <p>Contas pagas</p>

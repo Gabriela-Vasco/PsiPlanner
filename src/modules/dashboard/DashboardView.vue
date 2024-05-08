@@ -36,12 +36,12 @@ export default {
           text: 'Pagamento',
           value: 'payment',
           align: 'center'
-        },
-        {
-          text: 'Anotações',
-          value: 'anotations',
-          align: 'center'
         }
+        // {
+        //   text: 'Anotações',
+        //   value: 'anotations',
+        //   align: 'center'
+        // }
       ],
       items: [{
         id_client: 1,

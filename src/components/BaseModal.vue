@@ -22,27 +22,29 @@ export default {
     <v-dialog
       v-model='openDialog'
       persistent
-      width="500px"
+      width="40%"
     >
-        <v-card>
+        <v-card class="d-flex flex-column align-center pa-5">
             <slot name="close" />
-            <v-card>
-                <v-card-title>
+            <v-card
+              outlined
+              flat
+              width="100%"
+              class='d-flex flex-column align-around justify-content-center py-5 mt-5 base-modal'
+            >
+              <v-card-title class="align-self-center">
                 <slot name="modal-title" />
-                </v-card-title>
+              </v-card-title>
+              <slot name="modal-header"/>
 
-                <div>
-                    <slot name="modal-header"/>
-                </div>
-
-                <v-card-text>
+                <!-- <v-card-text>
                     <slot name="modal-content" />
-                </v-card-text>
+                </v-card-text> -->
             </v-card>
         </v-card>
     </v-dialog>
 </template>
 
-<style>
-
+<style lang="scss" scoped>
+@import 'src/style/components/base-modal.sass'
 </style>

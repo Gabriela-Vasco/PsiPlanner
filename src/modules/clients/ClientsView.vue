@@ -1,12 +1,15 @@
 <script>
 import ClientsTable from '@/modules/clients/components/ClientsTable.vue'
 import ClientModal from './components/ClientModal.vue'
+import ClientsAnotationsModal from './components/ClientsAnotationsModal.vue'
+import { EventBus } from '@/utils/EventBus.js'
 
 export default {
   name: 'ClientsView',
   components: {
     ClientsTable,
-    ClientModal
+    ClientModal,
+    ClientsAnotationsModal
   },
   data () {
     return {
@@ -38,10 +41,15 @@ export default {
           align: 'center'
         },
         {
-          text: 'Histórico',
-          value: 'psychological_records',
+          text: 'Ações',
+          value: 'actions',
           align: 'center'
         }
+        // {
+        //   text: 'Histórico',
+        //   value: 'psychological_records',
+        //   align: 'center'
+        // }
       ],
       items: [
         {
@@ -49,7 +57,8 @@ export default {
           start_date: '17/04/2024',
           appointment_time: '9:00',
           payment_value: 100.00,
-          active: true
+          active: true,
+          actions: ''
         },
         {
           client_name: 'Julia Pereira',
@@ -65,18 +74,12 @@ export default {
           payment_value: 90.50,
           active: false
         }
-      ],
-      modalActive: false,
-      modalText: ''
+      ]
     }
   },
   methods: {
-    openModal (itemId) {
-      console.log('entrou na view')
-      // Logic to find clicked item and update modal text
-      const foundItem = this.items.find(item => item.id_client === itemId)
-      this.modalText = `You clicked on item: ${foundItem.name}`
-      this.modalActive = true
+    openModal () {
+      EventBus.$emit('openItemModal')
     }
   }
 }
@@ -84,7 +87,11 @@ export default {
 <template>
   <div class="pa-0 ma-0">
     <v-card class="d-flex flex-column align-items-center my-10 h-100vh">
-        <v-btn text outlined class="mt-10 mr-10 align-self-end btn-primary-dark white--text">
+        <v-btn
+          color="#0B132B"
+          class="mt-10 mr-10 align-self-end white--text"
+          @click="openModal()"
+        >
           <v-icon>mdi-plus</v-icon>
           Novo cliente
         </v-btn>
@@ -92,9 +99,9 @@ export default {
             :headers="headers"
             :items="items"
             class='mb-10 mt-5'
-            @open-modal="openModal"
         />
     </v-card>
     <ClientModal />
+    <ClientsAnotationsModal />
   </div>
 </template>
