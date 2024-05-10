@@ -1,8 +1,10 @@
 <script>
+import { mapActions, mapGetters } from 'vuex'
 import ClientsTable from '@/modules/clients/components/ClientsTable.vue'
 import ClientModal from './components/ClientModal.vue'
 import ClientsAnotationsModal from './components/ClientsAnotationsModal.vue'
 import { EventBus } from '@/utils/EventBus.js'
+import Service from './Service.js'
 
 export default {
   name: 'ClientsView',
@@ -50,36 +52,30 @@ export default {
         //   value: 'psychological_records',
         //   align: 'center'
         // }
-      ],
-      items: [
-        {
-          client_name: 'Maria Machado',
-          start_date: '17/04/2024',
-          appointment_time: '9:00',
-          payment_value: 100.00,
-          active: true,
-          actions: ''
-        },
-        {
-          client_name: 'Julia Pereira',
-          start_date: '17/04/2024',
-          appointment_time: '9:00',
-          payment_value: 120.00,
-          active: true
-        },
-        {
-          client_name: 'Larissa Silva',
-          start_date: '17/04/2024',
-          appointment_time: '9:00',
-          payment_value: 90.50,
-          active: false
-        }
       ]
     }
   },
+  mounted () {
+    this.fetchClients()
+  },
+  computed: {
+    ...mapGetters(['getClients']),
+    items () {
+      return this.getClients
+    }
+  },
   methods: {
+    ...mapActions(['setClients']),
     openModal () {
       EventBus.$emit('openItemModal')
+    },
+    async fetchClients () {
+      try {
+        const data = await Service.list()
+        this.setClients(data)
+      } catch (error) {
+        console.error('Erro ao buscar dados, ', error)
+      }
     }
   }
 }
@@ -101,7 +97,7 @@ export default {
             class='mb-10 mt-5'
         />
     </v-card>
-    <ClientModal />
+    <ClientModal @update='fetchClients' />
     <ClientsAnotationsModal />
   </div>
 </template>

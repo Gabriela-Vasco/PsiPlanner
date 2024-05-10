@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex'
 import DashboardTable from '@/modules/dashboard/components/DashboardTable.vue'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -42,19 +43,15 @@ export default {
         //   value: 'anotations',
         //   align: 'center'
         // }
-      ],
-      items: [{
-        id_client: 1,
-        appointment_time: '9:00',
-        confirmation: false,
-        payment: false
-      },
-      {
-        id_client: 2,
-        appointment_time: '9:00',
-        confirmation: false,
-        payment: false
-      }]
+      ]
+    }
+  },
+  computed: {
+    ...mapGetters(['getClients']),
+    items () {
+      return this.getClients.filter(client => {
+        return dayjs(client.appointment_date).isSame(dayjs(), 'day')
+      })
     }
   },
   mounted () {
