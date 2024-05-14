@@ -1,4 +1,5 @@
 <script>
+import { mapGetters } from 'vuex'
 // eslint-disable vue/valid-v-slot
 export default {
   props: {
@@ -7,6 +8,35 @@ export default {
     },
     items: {
       type: Array, default: () => []
+    }
+  },
+  data () {
+    return {
+      allowEdit: false
+    }
+  },
+  computed: {
+    ...mapGetters(['getClients']),
+    clients () {
+      let clients = this.getClients
+      clients = clients.reduce((acc, client) => {
+        acc[client.id] = client.client_name
+        return acc
+      }, [])
+
+      return clients
+    }
+  },
+  methods: {
+    updateSession () {
+      this.allowEdit = false
+    },
+    formatMoney (money) {
+      if (Number.isInteger(money)) {
+        return 'R$ ' + String(money) + ',00'
+      } else {
+        return 'R$ ' + String(money).replace('.', ',').padEnd(5, '0')
+      }
     }
   }
 }
@@ -18,17 +48,21 @@ export default {
             :headers="headers"
             :items="items"
         >
-            <template v-slot:item.id_client="{ item }">
-                {{ item.id_client || ' - ' }}
+            <template v-slot:item.clientId="{ item }">
+                {{ clients[item.clientId] || '-' }}
             </template>
             // eslint-disable-next-line vue/valid-v-slot
-            <template v-slot:item.appointment_time="{ item }">
-                {{ item.appointment_time || ' - ' }}
+            <template v-slot:item.session_date="{ item }">
+                {{ item.session_date || ' - ' }}
             </template>
-            <template v-slot:item.confirmation="{ item }">
+            <template v-slot:item.session_value="{ item }">
+                {{ formatMoney(item.session_value) || ' - ' }}
+            </template>
+            <template v-slot:item.attended="{ item }">
                 <div class="d-flex justify-content-center align-items-center">
                     <v-checkbox
-                        v-model="item.confirmation"
+                        v-model="item.attended"
+                        :disabled="!allowEdit"
                     ></v-checkbox>
                     <!-- <v-btn
                         v-if="!item.confirmation"
@@ -39,11 +73,45 @@ export default {
                     </v-btn> -->
                 </div>
             </template>
-            <template v-slot:item.payment="{ item }">
+            <template v-slot:item.payed="{ item }">
                 <div class="d-flex justify-content-center">
                     <v-checkbox
-                        v-model="item.payment"
+                        v-model="item.payed"
+                        :disabled="!allowEdit"
                     ></v-checkbox>
+                </div>
+            </template>
+            <template v-slot:item.actions>
+                <div v-if="!allowEdit" class="d-flex justify-content-center">
+                    <v-btn
+                      small
+                      rounded
+                      color="#0B132B"
+                      icon
+                      @click="allowEdit = true"
+                    >
+                        <v-icon>mdi-pencil-circle</v-icon>
+                    </v-btn>
+                </div>
+                <div v-else class="d-flex justify-content-center">
+                    <v-btn
+                      small
+                      rounded
+                      color="success"
+                      icon
+                      @click="updateSession"
+                    >
+                        <v-icon>mdi-check-circle</v-icon>
+                    </v-btn>
+                    <v-btn
+                      small
+                      rounded
+                      color="error"
+                      icon
+                      @click="allowEdit = false"
+                    >
+                        <v-icon>mdi-close-circle</v-icon>
+                    </v-btn>
                 </div>
             </template>
             <!-- <template v-slot:item.anotations>

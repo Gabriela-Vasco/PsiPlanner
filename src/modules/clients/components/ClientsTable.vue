@@ -10,15 +10,8 @@ export default {
     }
   },
   methods: {
-    formatMoney (money) {
-      if (Number.isInteger(money)) {
-        return 'R$ ' + String(money) + ',00'
-      } else {
-        return 'R$ ' + String(money).replace('.', ',').padEnd(5, '0')
-      }
-    },
     openModal (item) {
-      EventBus.$emit('openItemModal', item)
+      EventBus.$emit('openClientModal', item)
     }
   }
 }
@@ -35,12 +28,6 @@ export default {
             </template>
             <template v-slot:item.start_date="{ item }">
                 {{ item.start_date || ' - ' }}
-            </template>
-            <template v-slot:item.time="{ item }">
-                {{ item.time || ' - ' }}
-            </template>
-            <template v-slot:item.payment_value="{ item }">
-                {{ formatMoney(item.payment_value) || ' - ' }}
             </template>
             <template v-slot:item.active="{ item }">
                 <v-chip

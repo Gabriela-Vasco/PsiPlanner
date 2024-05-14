@@ -1,10 +1,11 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import DashboardTable from '@/modules/dashboard/components/DashboardTable.vue'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import 'dayjs/locale/pt-br'
+import Service from './Service.js'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -20,22 +21,32 @@ export default {
       headers: [
         {
           text: 'Cliente',
-          value: 'id_client',
+          value: 'clientId',
           align: 'center'
         },
         {
           text: 'Horário',
-          value: 'appointment_time',
+          value: 'session_date',
+          align: 'center'
+        },
+        {
+          text: 'Valor',
+          value: 'session_value',
           align: 'center'
         },
         {
           text: 'Confirmação',
-          value: 'confirmation',
+          value: 'attended',
           align: 'center'
         },
         {
           text: 'Pagamento',
-          value: 'payment',
+          value: 'payed',
+          align: 'center'
+        },
+        {
+          text: 'Ações',
+          value: 'actions',
           align: 'center'
         }
         // {
@@ -47,17 +58,31 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getClients']),
+    ...mapGetters(['getSessions']),
     items () {
-      return this.getClients.filter(client => {
-        return dayjs(client.appointment_date).isSame(dayjs(), 'day')
-      })
+      return this.getSessions
     }
   },
   mounted () {
     dayjs.locale('pt-br')
     this.today = dayjs().utc().utcOffset(-3).format('DD, MMMM, YYYY')
     this.today = this.today.replaceAll(',', ' de')
+    this.fetchTodaySessions()
+  },
+  methods: {
+    ...mapActions(['setSessions']),
+    async fetchTodaySessions () {
+      try {
+        let data = await Service.list()
+        data = data.filter(item => {
+          return item.session_date === dayjs().format('DD/MM/YYYY')
+        })
+
+        this.setSessions(data)
+      } catch (error) {
+        console.error('Erro ao buscar dados, ', error)
+      }
+    }
   }
 }
 </script>

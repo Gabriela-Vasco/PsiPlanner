@@ -7,9 +7,7 @@ export default {
     const newID = uuid.v1()
     await setDoc(doc(db, 'clients', newID), {
       active: client.active,
-      appointment_time: client.appointment_time,
       client_name: client.client_name,
-      payment_value: client.payment_value,
       start_date: Timestamp.fromDate(client.start_date.toDate())
     })
   },

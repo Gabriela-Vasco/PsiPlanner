@@ -13,7 +13,7 @@ export default {
   },
   data () {
     return {
-      dialog: false,
+      dialogClientModal: false,
       newClient: false,
       menuDate: false,
       menuTime: false,
@@ -52,10 +52,11 @@ export default {
     }
   },
   created () {
-    EventBus.$on('openItemModal', this.openModal)
+    EventBus.$on('openClientModal', this.openModal)
+    console.log('aqui')
   },
   beforeDestroy () {
-    EventBus.$off('openItemModal', this.openModal)
+    EventBus.$off('openClientModal', this.openModal)
   },
   watch: {
     dateWithoutFormatting (val) {
@@ -68,16 +69,13 @@ export default {
       this.newClient = false
       this.item = {
         client_name: '',
-        appointment_time: '',
-        appointment_date: '',
         start_date: '',
-        payment_value: '',
         active: false
       }
     },
     openModal (item) {
       this.clear()
-      this.dialog = true
+      this.dialogClientModal = true
       if (item) {
         this.item = item
       } else {
@@ -85,7 +83,7 @@ export default {
       }
     },
     closeModal () {
-      this.dialog = false
+      this.dialogClientModal = false
     },
     formatClientData () {
       this.item = {
@@ -110,7 +108,7 @@ export default {
 }
 </script>
 <template>
-    <BaseModal :dialog='dialog'>
+    <BaseModal :dialog='dialogClientModal'>
       <template #close>
           <v-btn
             icon

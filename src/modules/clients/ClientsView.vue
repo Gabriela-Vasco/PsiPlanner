@@ -28,16 +28,6 @@ export default {
           align: 'center'
         },
         {
-          text: 'Horário',
-          value: 'appointment_time',
-          align: 'center'
-        },
-        {
-          text: 'Valor',
-          value: 'payment_value',
-          align: 'center'
-        },
-        {
           text: 'Situação',
           value: 'active',
           align: 'center'
@@ -66,8 +56,8 @@ export default {
   },
   methods: {
     ...mapActions(['setClients']),
-    openModal () {
-      EventBus.$emit('openItemModal')
+    openClientModal () {
+      EventBus.$emit('openClientModal')
     },
     async fetchClients () {
       try {
@@ -86,7 +76,7 @@ export default {
         <v-btn
           color="#0B132B"
           class="mt-10 mr-10 align-self-end white--text"
-          @click="openModal()"
+          @click="openClientModal()"
         >
           <v-icon>mdi-plus</v-icon>
           Novo cliente
