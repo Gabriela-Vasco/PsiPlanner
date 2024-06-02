@@ -1,6 +1,7 @@
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { EventBus } from '@/utils/EventBus.js'
+import AgendaService from '@/modules/agenda/AgendaService'
 import BaseModal from '@/components/BaseModal.vue'
 import dayjs from 'dayjs'
 
@@ -14,12 +15,13 @@ export default {
       newSession: false,
       item: {
         clientId: '',
-        session_date: '',
-        session_time: '',
+        start: '',
+        end: '',
         session_value: '',
         confirmation: false,
         attended: false,
-        payed: false
+        payed: false,
+        details: ''
       }
     }
   },
@@ -34,18 +36,26 @@ export default {
       this.item.start_date = dayjs(val).format('DD/MM/YYYY')
     }
   },
+  computed: {
+    ...mapGetters(['getClients']),
+    clients () {
+      return this.getClients
+    }
+  },
   methods: {
     ...mapActions(['addNewSession']),
     clear () {
       this.newSession = false
       this.item = {
         clientId: '',
-        session_date: '',
-        session_time: '',
+        start: '',
+        end: '',
         session_value: '',
         confirmation: false,
         attended: false,
-        payed: false
+        payed: false,
+        details: ''
+        // color: ''
       }
     },
     openModal (item) {
@@ -63,13 +73,13 @@ export default {
     formatSessionData () {
       this.item = {
         ...this.item,
-        session_value: parseFloat(this.item.session_value),
-        session_date: dayjs(this.item.session_date)
+        session_value: parseFloat(this.item.session_value)
       }
     },
     async saveNewSession () {
       try {
         this.formatSessionData()
+        await AgendaService.save(this.item)
       } catch (error) {
         console.error('Erro ao salvar: ', error)
       } finally {
@@ -101,17 +111,18 @@ export default {
           <v-container class="d-flex flex-column mt-7">
             <v-row class="d-flex flex-column align-center">
               <v-col v-if="newSession" cols="10" class="my-0 py-0">
-                <v-text-field
-                  v-model="item.client_name"
-                  label="Nome do cliente"
-                  placeholder="Joana Silva"
-                  outlined
-                  dense
-                ></v-text-field>
+                <v-autocomplete
+                  v-model="item.clientId"
+                  :items="clients"
+                  item-text="client_name"
+                  item-value="id"
+                />
               </v-col>
               <v-col cols="10" class="my-0 py-0">
+                <v-text-field v-model="item.start" type="date" label="Data início"></v-text-field>
               </v-col>
               <v-col cols="10" class="my-0 py-0">
+                <v-text-field v-model="item.end" type="date" label="Data fim"></v-text-field>
               </v-col>
               <v-col cols="10" class="my-0 py-0">
                 <v-text-field
@@ -123,24 +134,34 @@ export default {
                 ></v-text-field>
               </v-col>
               <v-col cols="10" class="my-0 py-0">
-                <v-switch
+                <textarea-autosize
+                  v-model="item.details"
+                  type="text"
+                  style="width: 100%"
+                  :min-height="100"
+                  placeholder="details"
+                />
+              </v-col>
+              <v-col cols="10" class="my-0 py-0">
+                <v-checkbox
                   v-model="item.payed"
                   color="#0B132B"
                   class="my-0 py-0"
-                  :label="item.payed ? 'Pagamento realizado' : 'Pagamento não realizado'"
-                ></v-switch>
-                <v-switch
+                  label="Pagamento realizado"
+                ></v-checkbox>
+                <v-checkbox
                   v-model="item.confirmation"
                   color="#0B132B"
                   class="my-0 py-0"
-                  :label="item.confirmation ? 'Sessão confirmada' : 'Sessão não confirmada'"
-                ></v-switch>
-                <v-switch
+                  label="Sessão confirmada"
+                ></v-checkbox>
+                <v-checkbox
                   v-model="item.attended"
                   color="#0B132B"
                   class="my-0 py-0"
-                  :label="item.attended ? 'Sessão realizada' : 'Sessão não realizada'"
-                ></v-switch>
+                  label="Sessão realizada"
+                ></v-checkbox>
+                <v-text-field v-model="item.color" type="color" label="Cor"></v-text-field>
               </v-col>
             </v-row>
             <v-btn

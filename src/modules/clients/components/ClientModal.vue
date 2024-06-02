@@ -2,7 +2,7 @@
 import { mapActions } from 'vuex'
 import { EventBus } from '@/utils/EventBus.js'
 import BaseModal from '@/components/BaseModal.vue'
-import Service from '../Service.js'
+import ClientsService from '../ClientsService.js'
 import dayjs from 'dayjs'
 
 // import ClientsAnotationsTable from './ClientsAnotationsTable.vue'
@@ -95,7 +95,7 @@ export default {
     async saveNewClient () {
       try {
         this.formatClientData()
-        await Service.save(this.item)
+        await ClientsService.save(this.item)
       } catch (error) {
         console.error('Erro ao salvar: ', error)
       } finally {

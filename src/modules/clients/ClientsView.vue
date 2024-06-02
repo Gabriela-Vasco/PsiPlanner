@@ -4,7 +4,7 @@ import ClientsTable from '@/modules/clients/components/ClientsTable.vue'
 import ClientModal from './components/ClientModal.vue'
 import ClientsAnotationsModal from './components/ClientsAnotationsModal.vue'
 import { EventBus } from '@/utils/EventBus.js'
-import Service from './Service.js'
+import ClientsService from './ClientsService.js'
 
 export default {
   name: 'ClientsView',
@@ -61,7 +61,7 @@ export default {
     },
     async fetchClients () {
       try {
-        const data = await Service.list()
+        const data = await ClientsService.list()
         this.setClients(data)
       } catch (error) {
         console.error('Erro ao buscar dados, ', error)
