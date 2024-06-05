@@ -10,6 +10,9 @@ export default {
     AgendaModal
   },
   data: () => ({
+    snackbarSuccess: false,
+    snackbarFailure: false,
+    loading: false,
     today: new Date().toISOString().substring(0, 10),
     focus: new Date().toISOString().substring(0, 10),
     type: 'week',
@@ -31,16 +34,24 @@ export default {
     selectedElement: null,
     selectedOpen: false,
     sessions: [],
-    dialog: false,
-    colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
-    names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party']
+    dialog: false
   }),
+
   mounted () {
     this.fetchClients()
     this.fetchSessions()
     this.$refs.calendar.scrollToTime('07:00')
     this.$refs.calendar.checkChange()
   },
+
+  watch: {
+    selectedOpen () {
+      if (this.selectedOpen === false) {
+        this.currentlyEditing = null
+      }
+    }
+  },
+
   computed: {
     ...mapGetters(['getClients']),
     clients () {
@@ -53,6 +64,7 @@ export default {
       return clients
     }
   },
+
   methods: {
     ...mapActions(['setClients']),
     async fetchSessions () {
@@ -64,11 +76,11 @@ export default {
             name: this.clients[session.clientId]
           }
         })
-        console.log(this.sessions)
       } catch (e) {
         console.error(e)
       }
     },
+
     async fetchClients () {
       try {
         const data = await ClientsService.list()
@@ -77,33 +89,37 @@ export default {
         console.error('Erro ao buscar dados, ', error)
       }
     },
+
     viewDay ({ date }) {
       this.focus = date
       this.type = 'day'
     },
+
     getEventColor (event) {
-      return event.color
+      return event.color || this.color
     },
+
     setToday () {
       this.focus = new Date().toISOString().substring(0, 10)
     },
+
     prev () {
       this.$refs.calendar.prev()
     },
+
     next () {
       this.$refs.calendar.next()
     },
+
     showEvent ({ nativeEvent, event }) {
       const open = () => {
         this.selectedEvent = event
         this.selectedElement = nativeEvent.target
-        // setTimeout(() => (this.selectedOpen = true), 10)
         requestAnimationFrame(() => requestAnimationFrame(() => { this.selectedOpen = true }))
       }
 
       if (this.selectedOpen) {
         this.selectedOpen = false
-        // setTimeout(open, 10)
         requestAnimationFrame(() => requestAnimationFrame(() => open()))
       } else {
         open()
@@ -111,67 +127,45 @@ export default {
 
       nativeEvent.stopPropagation()
     },
-    // updateRange ({ start, end }) {
-    //   const events = []
 
-    //   const min = new Date(`${start.date}T00:00:00`)
-    //   const max = new Date(`${end.date}T23:59:59`)
-    //   const days = (max.getTime() - min.getTime()) / 86400000
-    //   const eventCount = this.rnd(days, days + 20)
-
-    //   for (let i = 0; i < eventCount; i++) {
-    //     const allDay = this.rnd(0, 3) === 0
-    //     const firstTimestamp = this.rnd(min.getTime(), max.getTime())
-    //     const first = new Date(firstTimestamp - (firstTimestamp % 900000))
-    //     const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
-    //     const second = new Date(first.getTime() + secondTimestamp)
-
-    //     events.push({
-    //       name: this.names[this.rnd(0, this.names.length - 1)],
-    //       start: first,
-    //       end: second,
-    //       color: this.colors[this.rnd(0, this.colors.length - 1)],
-    //       timed: !allDay
-    //     })
-    //   }
-
-    //   this.events = events
-    // },
-    // rnd (a, b) {
-    //   return Math.floor((b - a + 1) * Math.random()) + a
-    // },
     editSession (session) {
       this.currentlyEditing = session.id
     },
     async deleteSession (session) {
       try {
+        this.loading = true
         await AgendaService.delete(session)
+        this.snackbarSuccess = true
       } catch (e) {
         console.error(e)
+        this.snackbarFailure = true
       } finally {
         this.selectedOpen = false
+        this.loading = false
         this.fetchSessions()
       }
     },
+
     async updateSession (session) {
       try {
+        this.loading = true
         await AgendaService.update(session, this.currentlyEditing)
+        this.snackbarSuccess = true
       } catch (e) {
         console.error(e)
+        this.snackbarFailure = true
       } finally {
         this.selectedOpen = false
         this.currentlyEditing = null
+        this.loading = false
       }
     },
     openModal (item) {
       EventBus.$emit('openAgendaModal', item)
     },
     formatMoney (money) {
-      return 'R$ ' + String(money) + ',00'
-      // if (Number.isInteger(money)) {
-      // } else {
-      //   return 'R$ ' + String(money).replace('.', ',').padEnd(5, '0')
-      // }
+      const moneyFormatted = money?.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })
+      return moneyFormatted
     }
   }
 }
@@ -251,35 +245,15 @@ export default {
               </v-icon>
             </v-btn>
             <v-spacer></v-spacer>
-            <v-btn
-              color="primary"
-              dark
-              @click="openModal(null)"
-            >
-              Nova sessão
-            </v-btn>
+            <agenda-modal
+            @update="fetchSessions"
+            @snackbarSucess="snackbarSuccess = true"
+            @snackbarFailure="snackbarFailure = true"
+            />
           </v-toolbar>
         </v-sheet>
 
-        <agenda-modal @update="fetchSessions"/>
-
-        <v-sheet height="600">
-          <!-- <v-calendar
-            ref="calendar"
-            v-model="focus"
-            color="primary"
-            :events="sessions"
-            :event-color="getEventColor"
-            :type="type"
-            :now="today"
-            class="mt-10"
-            locale="pt-BR"
-            @click:event="showEvent"
-            @click:more="viewDay"
-            @click:date="viewDay"
-            @change="updateRange"
-          >
-          </v-calendar> -->
+        <v-sheet height="800">
           <v-calendar
             ref="calendar"
             v-model="focus"
@@ -288,7 +262,7 @@ export default {
             :event-color="getEventColor"
             :type="type"
             :now="today"
-            class="mt-10"
+            class="mt-10 fill-height"
             locale="pt-BR"
             @click:event="showEvent"
             @click:more="viewDay"
@@ -310,17 +284,21 @@ export default {
                 :color="selectedEvent.color"
                 dark
               >
-                <v-btn icon @click="deleteSession(selectedEvent.id)">
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
                 <v-toolbar-title>{{ clients[selectedEvent.clientId] }}</v-toolbar-title>
                 <v-spacer></v-spacer>
+                <v-btn
+                  icon
+                  color="white"
+                  @click="selectedOpen = false"
+                >
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
               </v-toolbar>
               <v-card-text>
                 <div v-if="currentlyEditing !== selectedEvent.id">
                   <p>
                     <span class="font-weight-medium text-body-2">Valor:</span>
-                    {{ formatMoney(selectedEvent.session_value) }}
+                    {{ formatMoney(selectedEvent?.session_value) }}
                   </p>
 
                   <p>
@@ -343,8 +321,8 @@ export default {
                 </div>
                 <div v-else>
                   <form @submit.prevent>
-                    <v-text-field v-model="selectedEvent.start" type="date" label="Data início"></v-text-field>
-                    <v-text-field v-model="selectedEvent.end" type="date" label="Data fim"></v-text-field>
+                    <v-text-field v-model="selectedEvent.start" type="datetime-local" label="Data início"></v-text-field>
+                    <v-text-field v-model="selectedEvent.end" type="datetime-local" label="Data fim"></v-text-field>
 
                     <v-text-field
                       v-model="selectedEvent.session_value"
@@ -352,6 +330,7 @@ export default {
                       placeholder="R$100,00"
                       outlined
                       dense
+                      v-money
                     ></v-text-field>
                     <v-checkbox
                       v-model="selectedEvent.payed"
@@ -375,32 +354,45 @@ export default {
                     <textarea-autosize
                       v-model="selectedEvent.details"
                       type="text"
-                      style="width: 100%"
+                      class="pa-2 textarea"
                       :min-height="100"
-                      placeholder="add note"
+                      placeholder="Escreva aqui"
                     />
                     <v-text-field v-model="selectedEvent.color" type="color" label="Cor"></v-text-field>
                   </form>
                 </div>
               </v-card-text>
               <v-card-actions>
-                <v-btn
-                  text
-                  color="secondary"
-                  @click="selectedOpen = false"
-                >
-                  Fechar
-                </v-btn>
-                <v-btn
-                  v-if="currentlyEditing !== selectedEvent.id"
-                  text
-                  @click.prevent="editSession(selectedEvent)"
-                >
-                  Editar
-                </v-btn>
+                <div v-if="currentlyEditing !== selectedEvent.id" class="pa-0 ma-0">
+                  <v-btn
+                    outlined
+                    text
+                    color="red darken-2"
+                    small
+                    :loading="loading"
+                    class="mr-2"
+                    @click="deleteSession(selectedEvent.id)"
+                  >
+                    Excluir
+                  </v-btn>
+                  <v-btn
+                    text
+                    small
+                    outlined
+                    color="blue darken-2"
+                    @click.prevent="editSession(selectedEvent)"
+                  >
+                    Editar
+                  </v-btn>
+                </div>
+
                 <v-btn
                   v-else
                   text
+                  small
+                  outlined
+                  color="green darken-2"
+                  :loading="loading"
                   @click.prevent="updateSession(selectedEvent)"
                 >
                   Salvar
@@ -411,11 +403,65 @@ export default {
         </v-sheet>
       </v-col>
     </v-row>
-  </div>
+    <v-snackbar
+      v-model="snackbarSuccess"
+      timeout="2000"
+      elevation="12"
+      absolute
+      right
+      color="success"
+    >
+      Requisição feita com sucesso!
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          icon
+          v-bind="attrs"
+          @click="snackbarSuccess = false"
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <v-snackbar
+    v-model="snackbarFailure"
+    timeout="2000"
+    elevation="12"
+    absolute
+    right
+    color="red darken-2"
+    >
+      Houve um erro na requisição, tente novamente
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          icon
+          v-bind="attrs"
+          @click="snackbarFailure = false"
+        >
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+    </template>
+  </v-snackbar>
+</div>
 </template>
 
 <style scoped lang="scss">
 .calendar {
-  margin: 20px 30px 5px 5px
+  margin: 20px 30px 5px 5px;
+  height: 100vh;
+}
+
+.textarea {
+  width: 100%;
+  border: 1px solid #a9a8a8;
+  border-radius: 5px
+}
+
+.textarea:focus {
+  border: 1px solid #0f0f0f;
+}
+.textarea:hover {
+  border: 1px solid #0f0f0f;
 }
 </style>

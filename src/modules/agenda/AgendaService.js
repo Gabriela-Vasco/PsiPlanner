@@ -16,12 +16,16 @@ export default {
   },
 
   async save (session) {
+    const sessionValue = session.session_value != null ? String(session.session_value) : '0'
+
+    const sessionValueFormatted = sessionValue.replace('R$', '').replace(',', '.')
+
     const newID = uuid.v1()
     await setDoc(doc(db, 'sessoes', newID), {
       clientId: session.clientId,
       start: session.start,
       end: session.end,
-      session_value: session.session_value,
+      session_value: parseFloat(sessionValueFormatted),
       confirmation: session.confirmation,
       attended: session.attended,
       payed: session.payed,
@@ -31,10 +35,12 @@ export default {
   },
 
   async update (session, id) {
+    const sessionValueFormatted = session.session_value.replace('R$', '').replace(',', '.')
+
     await updateDoc(doc(db, 'sessoes', id), {
       start: session.start,
       end: session.end,
-      session_value: session.session_value,
+      session_value: parseFloat(sessionValueFormatted),
       confirmation: session.confirmation,
       attended: session.attended,
       payed: session.payed,

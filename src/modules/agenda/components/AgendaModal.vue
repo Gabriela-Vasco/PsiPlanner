@@ -2,17 +2,13 @@
 import { mapActions, mapGetters } from 'vuex'
 import { EventBus } from '@/utils/EventBus.js'
 import AgendaService from '@/modules/agenda/AgendaService'
-import BaseModal from '@/components/BaseModal.vue'
-import dayjs from 'dayjs'
 
 export default {
-  components: {
-    BaseModal
-  },
   data () {
     return {
       dialogAgendaModal: false,
       newSession: false,
+      loading: false,
       item: {
         clientId: '',
         start: '',
@@ -21,7 +17,8 @@ export default {
         confirmation: false,
         attended: false,
         payed: false,
-        details: ''
+        details: '',
+        color: ''
       }
     }
   },
@@ -30,11 +27,6 @@ export default {
   },
   beforeDestroy () {
     EventBus.$off('openAgendaModal', this.openModal)
-  },
-  watch: {
-    dateWithoutFormatting (val) {
-      this.item.start_date = dayjs(val).format('DD/MM/YYYY')
-    }
   },
   computed: {
     ...mapGetters(['getClients']),
@@ -54,8 +46,8 @@ export default {
         confirmation: false,
         attended: false,
         payed: false,
-        details: ''
-        // color: ''
+        details: '',
+        color: ''
       }
     },
     openModal (item) {
@@ -78,104 +70,138 @@ export default {
     },
     async saveNewSession () {
       try {
+        this.loading = true
         this.formatSessionData()
         await AgendaService.save(this.item)
+        this.$emit('snackbarSucess')
       } catch (error) {
         console.error('Erro ao salvar: ', error)
+        this.$emit('snackbarFailure')
       } finally {
         this.addNewSession(this.item)
         this.closeModal()
         this.$emit('update')
+        this.loading = false
       }
     }
   }
 }
 </script>
 <template>
-    <BaseModal :dialog='dialogAgendaModal'>
-      <template #close>
-          <v-btn
-            icon
-            color="black"
-            class='align-self-end'
-            @click="closeModal"
-          >
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-      </template>
-      <template #modal-title>
-          <h3 v-if="newSession">Nova sessão</h3>
-          <h3 v-else>Sessão do dia {{ item.session_date }}</h3>
-      </template>
-      <template #modal-header>
-          <v-container class="d-flex flex-column mt-7">
-            <v-row class="d-flex flex-column align-center">
-              <v-col v-if="newSession" cols="10" class="my-0 py-0">
-                <v-autocomplete
-                  v-model="item.clientId"
-                  :items="clients"
-                  item-text="client_name"
-                  item-value="id"
-                />
-              </v-col>
-              <v-col cols="10" class="my-0 py-0">
-                <v-text-field v-model="item.start" type="date" label="Data início"></v-text-field>
-              </v-col>
-              <v-col cols="10" class="my-0 py-0">
-                <v-text-field v-model="item.end" type="date" label="Data fim"></v-text-field>
-              </v-col>
-              <v-col cols="10" class="my-0 py-0">
-                <v-text-field
-                  v-model="item.session_value"
-                  label="Valor"
-                  placeholder="R$100,00"
-                  outlined
-                  dense
-                ></v-text-field>
-              </v-col>
-              <v-col cols="10" class="my-0 py-0">
-                <textarea-autosize
-                  v-model="item.details"
-                  type="text"
-                  style="width: 100%"
-                  :min-height="100"
-                  placeholder="details"
-                />
-              </v-col>
-              <v-col cols="10" class="my-0 py-0">
-                <v-checkbox
-                  v-model="item.payed"
-                  color="#0B132B"
-                  class="my-0 py-0"
-                  label="Pagamento realizado"
-                ></v-checkbox>
-                <v-checkbox
-                  v-model="item.confirmation"
-                  color="#0B132B"
-                  class="my-0 py-0"
-                  label="Sessão confirmada"
-                ></v-checkbox>
-                <v-checkbox
-                  v-model="item.attended"
-                  color="#0B132B"
-                  class="my-0 py-0"
-                  label="Sessão realizada"
-                ></v-checkbox>
-                <v-text-field v-model="item.color" type="color" label="Cor"></v-text-field>
-              </v-col>
-            </v-row>
-            <v-btn
+  <v-menu
+    v-model="dialogAgendaModal"
+    :close-on-content-click="false"
+    offset-x
+  >
+    <template v-slot:activator="{ on, attrs }">
+      <v-btn
+        color="#0B132B"
+        dark
+        v-bind="attrs"
+        v-on="on"
+      >
+        Nova sessão
+      </v-btn>
+    </template>
+    <v-card
+      color="grey lighten-4"
+      min-width="350px"
+      flat
+    >
+      <v-toolbar
+        color="#0B132B"
+        dark
+      >
+        <v-toolbar-title>Nova sessão</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn
+          icon
+          color="white"
+          @click="closeModal"
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <v-card-text>
+        <div class='pa-2'>
+          <form @submit.prevent>
+            <v-autocomplete
+              v-model="item.clientId"
+              :items="clients"
+              label="Cliente"
+              item-text="client_name"
+              item-value="id"
+              outlined
+            />
+
+            <v-text-field v-model="item.start" type="datetime-local" label="Data início"></v-text-field>
+            <v-text-field v-model="item.end" type="datetime-local" label="Data fim"></v-text-field>
+
+            <v-text-field
+              v-model="item.session_value"
+              label="Valor"
+              placeholder="R$100,00"
+              outlined
+              dense
+              v-money
+            ></v-text-field>
+            <v-checkbox
+              v-model="item.payed"
               color="#0B132B"
-              class="align-self-end white--text"
-              @click="saveNewSession"
-            >
-              Salvar
-            </v-btn>
-          </v-container>
-      </template>
-    </BaseModal>
+              class="my-0 py-0"
+              label="Pagamento realizado"
+            ></v-checkbox>
+            <v-checkbox
+              v-model="item.confirmation"
+              color="#0B132B"
+              class="my-0 py-0"
+              label="Sessão confirmada"
+            ></v-checkbox>
+            <v-checkbox
+              v-model="item.attended"
+              color="#0B132B"
+              class="my-0 py-0"
+              label="Sessão realizada"
+            ></v-checkbox>
+            <p class="font-weight-medium text-body-2">Observações:</p>
+            <textarea-autosize
+              v-model="item.details"
+              type="text"
+              class="pa-2 textarea"
+              :min-height="100"
+              placeholder="Escreva aqui"
+            />
+            <v-text-field v-model="item.color" type="color" label="Cor"></v-text-field>
+          </form>
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn
+          text
+          outlined
+          color="green darken-2"
+          class="ml-2 mb-2"
+          :loading="loading"
+          @click.prevent="saveNewSession"
+        >
+          Salvar
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-menu>
 </template>
 
-<style>
+<style lang="scss" scoped>
+.textarea {
+  width: 100%;
+  border: 1px solid #a9a8a8;
+  border-radius: 5px
+}
 
+.textarea:focus {
+  border: 1px solid #0f0f0f;
+}
+.textarea:hover {
+  border: 1px solid #0f0f0f;
+}
 </style>

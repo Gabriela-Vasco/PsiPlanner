@@ -4,9 +4,11 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import TextareaAutosize from 'vue-textarea-autosize'
+import money from 'vuejs-money'
 
 Vue.config.productionTip = false
 Vue.use(TextareaAutosize)
+Vue.use(money)
 
 new Vue({
   router,
