@@ -3,7 +3,6 @@ import { mapActions } from 'vuex'
 import { EventBus } from '@/utils/EventBus.js'
 import BaseModal from '@/components/BaseModal.vue'
 import ClientsService from '../ClientsService.js'
-import dayjs from 'dayjs'
 
 // import ClientsAnotationsTable from './ClientsAnotationsTable.vue'
 export default {
@@ -15,17 +14,31 @@ export default {
     return {
       dialogClientModal: false,
       newClient: false,
-      menuDate: false,
-      menuTime: false,
-      dateWithoutFormatting: '',
       item: {
         client_name: '',
-        appointment_time: '',
-        appointment_date: '',
         start_date: '',
         payment_value: '',
-        active: false
+        frequency: '',
+        active: true
       },
+      frequencies: [
+        {
+          text: 'Nenhuma',
+          value: 'none'
+        },
+        {
+          text: 'Semanal',
+          value: 'weekly'
+        },
+        {
+          text: 'Quinzenal',
+          value: 'biweekly'
+        },
+        {
+          text: 'Mensal',
+          value: 'monthly'
+        }
+      ],
       headers: [
         {
           text: '',
@@ -53,15 +66,9 @@ export default {
   },
   created () {
     EventBus.$on('openClientModal', this.openModal)
-    console.log('aqui')
   },
   beforeDestroy () {
     EventBus.$off('openClientModal', this.openModal)
-  },
-  watch: {
-    dateWithoutFormatting (val) {
-      this.item.start_date = dayjs(val).format('DD/MM/YYYY')
-    }
   },
   methods: {
     ...mapActions(['addNewClient']),
@@ -69,8 +76,11 @@ export default {
       this.newClient = false
       this.item = {
         client_name: '',
+        start_time: '',
         start_date: '',
-        active: false
+        payment_value: '',
+        frequency: '',
+        active: true
       }
     },
     openModal (item) {
@@ -87,15 +97,33 @@ export default {
     },
     formatClientData () {
       this.item = {
-        ...this.item,
+        client_name: this.item.client_name,
+        start_date: this.item.start_date,
         payment_value: parseFloat(this.item.payment_value),
-        start_date: dayjs(this.item.start_date)
+        active: this.item.active
       }
+    },
+    formatSessionData (client) {
+      const newSession = {
+        clientId: client.clientId,
+        start: this.item.start_date,
+        end: this.item.start_date,
+        session_value: parseFloat(this.item.payment_value),
+        confirmation: false,
+        attended: false,
+        payed: false,
+        details: '',
+        frequency: this.item.frequency,
+        color: ''
+      }
+
+      return newSession
     },
     async saveNewClient () {
       try {
         this.formatClientData()
         await ClientsService.save(this.item)
+        console.log(this.item)
       } catch (error) {
         console.error('Erro ao salvar: ', error)
       } finally {
@@ -136,84 +164,35 @@ export default {
                 ></v-text-field>
               </v-col>
               <v-col cols="10" class="my-0 py-0">
-                <v-menu
-                  ref="menuTime"
-                  v-model="menuTime"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  :return-value.sync="item.appointment_time"
-                  transition="scale-transition"
-                  offset-y
-                  max-width="290px"
-                  min-width="290px"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="item.appointment_time"
-                      label="Horário da sessão"
-                      prepend-inner-icon="mdi-clock-time-four-outline"
-                      placeholder="9:00"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                      outlined
-                      dense
-                    ></v-text-field>
-                  </template>
-                  <v-time-picker
-                    v-if="menuTime"
-                    v-model="item.appointment_time"
-                    format="24hr"
-                    full-width
-                    @click:minute="$refs.menuTime.save(item.appointment_time)"
-                  ></v-time-picker>
-                </v-menu>
+                <v-text-field v-model="item.start_date" type="datetime-local" label="Data início" outlined dense></v-text-field>
               </v-col>
               <v-col cols="10" class="my-0 py-0">
-                <v-menu
-                  ref="menuDate"
-                  v-model="menuDate"
-                  :close-on-content-click="true"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      :value="item.start_date"
-                      label="Data de início"
-                      prepend-inner-icon="mdi-calendar"
-                      readonly
-                      outlined
-                      dense
-                      v-bind="attrs"
-                      v-on="on"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="dateWithoutFormatting"
-                    no-title
-                    scrollable
-                    locale="pt"
-                  >
-                  </v-date-picker>
-                </v-menu>
+                <v-autocomplete
+                v-model="item.frequency"
+                :items="frequencies"
+                label="Frequência"
+                item-text="text"
+                item-value="value"
+                dense
+                outlined
+              />
               </v-col>
               <v-col cols="10" class="my-0 py-0">
                 <v-text-field
                   v-model="item.payment_value"
                   label="Valor"
-                  placeholder="R$100,00"
+                  placeholder="100"
+                  prefix="R$"
                   outlined
                   dense
                 ></v-text-field>
               </v-col>
               <v-col cols="10" class="my-0 py-0">
-                <v-switch
+                <v-checkbox
                   v-model="item.active"
                   color="#0B132B"
-                  :label="item.active ? 'Cliente ativo' : 'Cliente inativo'"
-                ></v-switch>
+                  label="Cliente ativo"
+                ></v-checkbox>
               </v-col>
             </v-row>
             <v-btn

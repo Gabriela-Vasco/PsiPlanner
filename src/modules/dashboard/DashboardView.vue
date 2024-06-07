@@ -74,9 +74,12 @@ export default {
     async fetchTodaySessions () {
       try {
         let data = await Service.list()
+        console.log(data)
         data = data.filter(item => {
-          return item.session_date === dayjs().format('DD/MM/YYYY')
+          return item.start === dayjs().format('DD/MM/YYYY')
         })
+
+        console.log(data, 'data')
 
         this.setSessions(data)
       } catch (error) {

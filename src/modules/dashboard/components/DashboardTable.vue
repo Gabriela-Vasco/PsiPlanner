@@ -1,5 +1,6 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
+import AgendaService from '@/modules/agenda/AgendaService.js'
 // eslint-disable vue/valid-v-slot
 export default {
   props: {
@@ -8,6 +9,11 @@ export default {
     },
     items: {
       type: Array, default: () => []
+    }
+  },
+  watch: {
+    items () {
+      console.log(this.items)
     }
   },
   data () {
@@ -28,6 +34,20 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setClients']),
+    async fetchSessions () {
+      try {
+        this.sessions = await AgendaService.list()
+        this.sessions = this.sessions.map(session => {
+          return {
+            ...session,
+            name: this.clients[session.clientId]
+          }
+        })
+      } catch (e) {
+        console.error(e)
+      }
+    },
     updateSession () {
       this.allowEdit = false
     },

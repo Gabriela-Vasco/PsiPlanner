@@ -61,6 +61,8 @@ export default {
         return acc
       }, [])
 
+      console.log(clients)
+
       return clients
     }
   },
@@ -162,10 +164,6 @@ export default {
     },
     openModal (item) {
       EventBus.$emit('openAgendaModal', item)
-    },
-    formatMoney (money) {
-      const moneyFormatted = money?.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })
-      return moneyFormatted
     }
   }
 }
@@ -260,6 +258,8 @@ export default {
             color="primary"
             :events="sessions"
             :event-color="getEventColor"
+            event-overlap-mode="column"
+            event-overlap-threshold="30"
             :type="type"
             :now="today"
             class="mt-10 fill-height"
@@ -298,7 +298,7 @@ export default {
                 <div v-if="currentlyEditing !== selectedEvent.id">
                   <p>
                     <span class="font-weight-medium text-body-2">Valor:</span>
-                    {{ formatMoney(selectedEvent?.session_value) }}
+                    {{ ' R$ ' + selectedEvent?.session_value }}
                   </p>
 
                   <p>
@@ -327,10 +327,10 @@ export default {
                     <v-text-field
                       v-model="selectedEvent.session_value"
                       label="Valor"
-                      placeholder="R$100,00"
+                      placeholder="100"
+                      prefix="R$"
                       outlined
                       dense
-                      v-money
                     ></v-text-field>
                     <v-checkbox
                       v-model="selectedEvent.payed"

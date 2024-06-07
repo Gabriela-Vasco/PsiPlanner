@@ -2,6 +2,7 @@
 import { mapActions, mapGetters } from 'vuex'
 import { EventBus } from '@/utils/EventBus.js'
 import AgendaService from '@/modules/agenda/AgendaService'
+import dayjs from 'dayjs'
 
 export default {
   data () {
@@ -9,6 +10,24 @@ export default {
       dialogAgendaModal: false,
       newSession: false,
       loading: false,
+      frequencies: [
+        {
+          text: 'Nenhuma',
+          value: 'none'
+        },
+        {
+          text: 'Semanal',
+          value: 'weekly'
+        },
+        {
+          text: 'Quinzenal',
+          value: 'biweekly'
+        },
+        {
+          text: 'Mensal',
+          value: 'monthly'
+        }
+      ],
       item: {
         clientId: '',
         start: '',
@@ -18,8 +37,14 @@ export default {
         attended: false,
         payed: false,
         details: '',
+        frequency: 'none',
         color: ''
       }
+    }
+  },
+  watch: {
+    item () {
+      console.log(this.item)
     }
   },
   created () {
@@ -47,6 +72,7 @@ export default {
         attended: false,
         payed: false,
         details: '',
+        frequency: 'none',
         color: ''
       }
     },
@@ -63,6 +89,7 @@ export default {
       this.dialogAgendaModal = false
     },
     formatSessionData () {
+      console.log(this.item)
       this.item = {
         ...this.item,
         session_value: parseFloat(this.item.session_value)
@@ -72,7 +99,28 @@ export default {
       try {
         this.loading = true
         this.formatSessionData()
-        await AgendaService.save(this.item)
+
+        const saveSessions = async (iterations, increment, unit) => {
+          const date = dayjs(this.item.start)
+          for (let i = 0; i < iterations; i++) {
+            const newDate = date.add(i * increment, unit)
+            const startDate = newDate.format('YYYY-MM-DDTHH:mm:ss')
+            const endDate = newDate.format('YYYY-MM-DDTHH:mm:ss')
+            const session = { ...this.item, start: startDate, end: endDate }
+            await AgendaService.save(session)
+          }
+        }
+
+        if (this.item.frequency === 'weekly') {
+          await saveSessions(8, 1, 'week')
+        } else if (this.item.frequency === 'biweekly') {
+          await saveSessions(4, 2, 'week')
+        } else if (this.item.frequency === 'monthly') {
+          await saveSessions(2, 28, 'day')
+        } else {
+          await AgendaService.save(this.item)
+        }
+
         this.$emit('snackbarSucess')
       } catch (error) {
         console.error('Erro ao salvar: ', error)
@@ -140,11 +188,21 @@ export default {
             <v-text-field
               v-model="item.session_value"
               label="Valor"
-              placeholder="R$100,00"
+              placeholder="100"
+              prefix="R$"
               outlined
               dense
-              v-money
             ></v-text-field>
+
+            <v-autocomplete
+              v-model="item.frequency"
+              :items="frequencies"
+              label="Frequência"
+              item-text="text"
+              item-value="value"
+              outlined
+            />
+
             <v-checkbox
               v-model="item.payed"
               color="#0B132B"

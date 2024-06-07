@@ -1,5 +1,6 @@
 import db from '@/utils/firebaseInit.js'
 import { collection, getDocs } from 'firebase/firestore'
+import dayjs from 'dayjs'
 // import { uuid } from 'vue-uuid'
 
 export default {
@@ -23,7 +24,8 @@ export default {
     data = data.map((item) => {
       return {
         ...item,
-        session_date: item.session_date.toDate().toLocaleDateString()
+        start: dayjs(item.start)?.$d?.toLocaleDateString(),
+        session_date: dayjs(item.session_date)?.$d?.toLocaleTimeString().slice(0, 5)
       }
     })
 

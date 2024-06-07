@@ -1,15 +1,20 @@
 import db from '@/utils/firebaseInit.js'
-import { doc, setDoc, Timestamp, collection, getDocs } from 'firebase/firestore'
+import { doc, setDoc, collection, getDocs } from 'firebase/firestore'
 import { uuid } from 'vue-uuid'
+import dayjs from 'dayjs'
 
 export default {
   async save (client) {
     const newID = uuid.v1()
-    await setDoc(doc(db, 'clients', newID), {
+    const querySnapshot = await setDoc(doc(db, 'clients', newID), {
       active: client.active,
       client_name: client.client_name,
-      start_date: Timestamp.fromDate(client.start_date.toDate())
+      start_date: client.start_date
     })
+
+    console.log('querySnapshot', querySnapshot)
+
+    return querySnapshot
   },
 
   async list () {
@@ -21,7 +26,7 @@ export default {
     data = data.map((item) => {
       return {
         ...item,
-        start_date: item.start_date.toDate().toLocaleDateString()
+        start_date: dayjs(item.start_date)?.$d?.toLocaleDateString()
       }
     })
 
