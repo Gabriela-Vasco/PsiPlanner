@@ -4,6 +4,7 @@ import ClientsService from '@/modules/clients/ClientsService'
 import { EventBus } from '@/utils/EventBus.js'
 import AgendaService from './AgendaService'
 import AgendaModal from './components/AgendaModal.vue'
+import dayjs from 'dayjs'
 
 export default {
   components: {
@@ -13,8 +14,8 @@ export default {
     snackbarSuccess: false,
     snackbarFailure: false,
     loading: false,
-    today: new Date().toISOString().substring(0, 10),
-    focus: new Date().toISOString().substring(0, 10),
+    today: dayjs().utc().utcOffset(-3).format('YYYY-MM-DD'),
+    focus: dayjs().utc().utcOffset(-3).format('YYYY-MM-DD'),
     type: 'week',
     typeToLabel: {
       month: 'Mês',
@@ -40,7 +41,7 @@ export default {
   mounted () {
     this.fetchClients()
     this.fetchSessions()
-    this.$refs.calendar.scrollToTime('07:00')
+    this.$refs.calendar.scrollToTime('09:00')
     this.$refs.calendar.checkChange()
   },
 
@@ -60,8 +61,6 @@ export default {
         acc[client.id] = client.client_name
         return acc
       }, [])
-
-      console.log(clients)
 
       return clients
     }
@@ -171,7 +170,7 @@ export default {
 
 <template>
   <div class="calendar">
-    <v-row class="fill-height">
+    <v-row class="fill-height" align="center">
       <v-col>
         <v-sheet height="64">
           <v-toolbar
@@ -251,7 +250,7 @@ export default {
           </v-toolbar>
         </v-sheet>
 
-        <v-sheet height="800">
+        <v-sheet height="700" width="95%">
           <v-calendar
             ref="calendar"
             v-model="focus"
@@ -262,7 +261,7 @@ export default {
             event-overlap-threshold="30"
             :type="type"
             :now="today"
-            class="mt-10 fill-height"
+            class="mt-10 ml-10 fill-height"
             locale="pt-BR"
             @click:event="showEvent"
             @click:more="viewDay"
@@ -424,12 +423,12 @@ export default {
       </template>
     </v-snackbar>
     <v-snackbar
-    v-model="snackbarFailure"
-    timeout="2000"
-    elevation="12"
-    absolute
-    right
-    color="red darken-2"
+      v-model="snackbarFailure"
+      timeout="2000"
+      elevation="12"
+      absolute
+      right
+      color="red darken-2"
     >
       Houve um erro na requisição, tente novamente
 
@@ -448,8 +447,7 @@ export default {
 
 <style scoped lang="scss">
 .calendar {
-  margin: 20px 30px 5px 5px;
-  height: 100vh;
+  margin: 0px 20px 10px 5px;
 }
 
 .textarea {

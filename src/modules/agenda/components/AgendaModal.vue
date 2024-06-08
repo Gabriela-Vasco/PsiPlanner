@@ -89,7 +89,6 @@ export default {
       this.dialogAgendaModal = false
     },
     formatSessionData () {
-      console.log(this.item)
       this.item = {
         ...this.item,
         session_value: parseFloat(this.item.session_value)

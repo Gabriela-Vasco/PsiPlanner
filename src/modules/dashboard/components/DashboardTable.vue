@@ -1,7 +1,7 @@
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import AgendaService from '@/modules/agenda/AgendaService.js'
-// eslint-disable vue/valid-v-slot
+
 export default {
   props: {
     headers: {
@@ -11,14 +11,8 @@ export default {
       type: Array, default: () => []
     }
   },
-  watch: {
-    items () {
-      console.log(this.items)
-    }
-  },
   data () {
     return {
-      allowEdit: false
     }
   },
   computed: {
@@ -34,7 +28,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setClients']),
     async fetchSessions () {
       try {
         this.sessions = await AgendaService.list()
@@ -48,8 +41,14 @@ export default {
         console.error(e)
       }
     },
-    updateSession () {
-      this.allowEdit = false
+    async updateSession (session) {
+      try {
+        await AgendaService.update(session, session.id)
+      } catch (e) {
+        console.error(e)
+      } finally {
+        this.$emit('update')
+      }
     },
     formatMoney (money) {
       if (Number.isInteger(money)) {
@@ -68,71 +67,39 @@ export default {
             :headers="headers"
             :items="items"
         >
+        <!-- eslint-disable vue/valid-v-slot -->
             <template v-slot:item.clientId="{ item }">
                 {{ clients[item.clientId] || '-' }}
             </template>
-            // eslint-disable-next-line vue/valid-v-slot
-            <template v-slot:item.session_date="{ item }">
-                {{ item.session_date || ' - ' }}
+            <template v-slot:item.session_time="{ item }">
+                {{ item.session_time || ' - ' }}
             </template>
             <template v-slot:item.session_value="{ item }">
                 {{ formatMoney(item.session_value) || ' - ' }}
             </template>
-            <template v-slot:item.attended="{ item }">
-                <div class="d-flex justify-content-center align-items-center">
-                    <v-checkbox
-                        v-model="item.attended"
-                        :disabled="!allowEdit"
-                    ></v-checkbox>
-                    <!-- <v-btn
-                        v-if="!item.confirmation"
-                        icon
-                        color="blue"
-                    >
-                        <v-icon>mdi-whatsapp</v-icon>
-                    </v-btn> -->
-                </div>
+            <template v-slot:item.confirmation="{ item }">
+              <v-checkbox
+                  v-model="item.confirmation"
+                  color="#71F79F"
+                  class="ml-6"
+                  @click="updateSession(item)"
+              ></v-checkbox>
             </template>
             <template v-slot:item.payed="{ item }">
-                <div class="d-flex justify-content-center">
-                    <v-checkbox
-                        v-model="item.payed"
-                        :disabled="!allowEdit"
-                    ></v-checkbox>
-                </div>
+              <v-checkbox
+                  v-model="item.payed"
+                  color="#71F79F"
+                  class="ml-6"
+                  @click="updateSession(item)"
+              ></v-checkbox>
             </template>
-            <template v-slot:item.actions>
-                <div v-if="!allowEdit" class="d-flex justify-content-center">
-                    <v-btn
-                      small
-                      rounded
-                      color="#0B132B"
-                      icon
-                      @click="allowEdit = true"
-                    >
-                        <v-icon>mdi-pencil-circle</v-icon>
-                    </v-btn>
-                </div>
-                <div v-else class="d-flex justify-content-center">
-                    <v-btn
-                      small
-                      rounded
-                      color="success"
-                      icon
-                      @click="updateSession"
-                    >
-                        <v-icon>mdi-check-circle</v-icon>
-                    </v-btn>
-                    <v-btn
-                      small
-                      rounded
-                      color="error"
-                      icon
-                      @click="allowEdit = false"
-                    >
-                        <v-icon>mdi-close-circle</v-icon>
-                    </v-btn>
-                </div>
+            <template v-slot:item.attended="{ item }">
+              <v-checkbox
+                  v-model="item.attended"
+                  color="#71F79F"
+                  class="ml-6"
+                  @click="updateSession(item)"
+              ></v-checkbox>
             </template>
             <!-- <template v-slot:item.anotations>
                 <div class="d-flex justify-content-center">

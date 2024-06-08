@@ -5,7 +5,8 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import 'dayjs/locale/pt-br'
-import Service from './Service.js'
+import AgendaService from '@/modules/agenda/AgendaService.js'
+import ClientsService from '@/modules/clients/ClientsService.js'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -26,8 +27,7 @@ export default {
         },
         {
           text: 'Horário',
-          value: 'session_date',
-          align: 'center'
+          value: 'session_time'
         },
         {
           text: 'Valor',
@@ -36,18 +36,18 @@ export default {
         },
         {
           text: 'Confirmação',
-          value: 'attended',
-          align: 'center'
+          value: 'confirmation',
+          width: '140px'
         },
         {
           text: 'Pagamento',
           value: 'payed',
-          align: 'center'
+          width: '130px'
         },
         {
-          text: 'Ações',
-          value: 'actions',
-          align: 'center'
+          text: 'Realizada',
+          value: 'attended',
+          width: '140px'
         }
         // {
         //   text: 'Anotações',
@@ -68,18 +68,32 @@ export default {
     this.today = dayjs().utc().utcOffset(-3).format('DD, MMMM, YYYY')
     this.today = this.today.replaceAll(',', ' de')
     this.fetchTodaySessions()
+    this.fetchClients()
   },
   methods: {
-    ...mapActions(['setSessions']),
+    ...mapActions(['setSessions', 'setClients']),
+    async fetchClients () {
+      try {
+        const data = await ClientsService.list()
+        this.setClients(data)
+      } catch (error) {
+        console.error('Erro ao buscar dados, ', error)
+      }
+    },
     async fetchTodaySessions () {
       try {
-        let data = await Service.list()
-        console.log(data)
-        data = data.filter(item => {
-          return item.start === dayjs().format('DD/MM/YYYY')
+        let data = await AgendaService.list()
+
+        data = data.map(session => {
+          return {
+            ...session,
+            session_time: session.session_time || dayjs(session.start).utc().utcOffset(-3).format('HH:mm')
+          }
         })
 
-        console.log(data, 'data')
+        data = data.filter(item => {
+          return dayjs(item.start).date() === dayjs().date()
+        })
 
         this.setSessions(data)
       } catch (error) {
@@ -96,6 +110,7 @@ export default {
       :headers="headers"
       :items="items"
       class="mb-10"
+      @update="fetchTodaySessions"
     />
   </v-card>
 </template>

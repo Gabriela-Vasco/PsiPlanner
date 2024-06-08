@@ -15,6 +15,8 @@ export default {
   },
   data () {
     return {
+      snackbarSuccessClients: false,
+      snackbarFailureClients: false,
       today: '',
       headers: [
         {
@@ -28,9 +30,15 @@ export default {
           align: 'center'
         },
         {
+          text: 'Valor inicial',
+          value: 'payment_value',
+          align: 'center'
+        },
+        {
           text: 'Situação',
           value: 'active',
-          align: 'center'
+          align: 'center',
+          width: '110px'
         },
         {
           text: 'Ações',
@@ -72,22 +80,57 @@ export default {
 </script>
 <template>
   <div class="pa-0 ma-0">
-    <v-card class="d-flex flex-column align-items-center my-10 h-100vh">
-        <v-btn
-          color="#0B132B"
-          class="mt-10 mr-10 align-self-end white--text"
-          @click="openClientModal()"
-        >
-          <v-icon>mdi-plus</v-icon>
-          Novo cliente
-        </v-btn>
-        <ClientsTable
-            :headers="headers"
-            :items="items"
-            class='mb-10 mt-5'
-        />
+    <v-snackbar
+      v-model="snackbarSuccessClients"
+      timeout="2000"
+      elevation="12"
+      right
+      absolute
+      top
+      color="success"
+    >
+      Requisição feita com sucesso!
+    </v-snackbar>
+    <v-snackbar
+      v-model="snackbarFailureClients"
+      timeout="2000"
+      elevation="12"
+      right
+      absolute
+      top
+      color="red darken-2"
+    >
+      Houve um erro na requisição, tente novamente
+    </v-snackbar>
+    <v-card class="d-flex flex-column align-center my-10 card">
+      <v-btn
+        color="#0B132B"
+        class="mt-10 mr-10 align-self-end white--text"
+        @click="openClientModal()"
+      >
+        <v-icon>mdi-plus</v-icon>
+        Novo cliente
+      </v-btn>
+      <ClientsTable
+        :headers="headers"
+        :items="items"
+        class='mb-10 mt-5'
+        @update='fetchClients'
+        @snackbarSucessClients="snackbarSucessClients = true"
+        @snackbarFailureClients="snackbarFailureClients = true"
+      />
     </v-card>
-    <ClientModal @update='fetchClients' />
+    <ClientModal
+      @update='fetchClients'
+      @snackbarSucessClients="snackbarSuccessClients = true"
+      @snackbarFailureClients="snackbarFailureClients = true"
+    />
     <ClientsAnotationsModal />
   </div>
 </template>
+
+<style lang="scss" scoped>
+.card {
+  width: 95%;
+}
+</style>

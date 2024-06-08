@@ -1,6 +1,7 @@
 import db from '@/utils/firebaseInit.js'
 import { uuid } from 'vue-uuid'
 import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore'
+import dayjs from 'dayjs'
 
 export default {
   async list () {
@@ -19,8 +20,9 @@ export default {
     const newID = uuid.v1()
     await setDoc(doc(db, 'sessoes', newID), {
       clientId: session.clientId,
-      start: session.start,
-      end: session.end,
+      start: dayjs(session.start).format('YYYY-MM-DD HH:mm:ss'),
+      end: dayjs(session.end).format('YYYY-MM-DD HH:mm:ss'),
+      session_time: dayjs(session.start).format('HH:mm'),
       session_value: session.session_value,
       confirmation: session.confirmation,
       attended: session.attended,
@@ -33,9 +35,11 @@ export default {
 
   async update (session, id) {
     await updateDoc(doc(db, 'sessoes', id), {
-      start: session.start,
-      end: session.end,
+      id: session.id,
+      start: dayjs(session.start).format('YYYY-MM-DD HH:mm:ss'),
+      end: dayjs(session.end).format('YYYY-MM-DD HH:mm:ss'),
       session_value: parseFloat(session.session_value),
+      session_time: dayjs(session.start).format('HH:mm'),
       confirmation: session.confirmation,
       attended: session.attended,
       payed: session.payed,

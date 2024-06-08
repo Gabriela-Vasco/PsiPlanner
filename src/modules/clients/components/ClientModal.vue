@@ -1,8 +1,11 @@
 <script>
 import { mapActions } from 'vuex'
 import { EventBus } from '@/utils/EventBus.js'
+import { uuid } from 'vue-uuid'
 import BaseModal from '@/components/BaseModal.vue'
 import ClientsService from '../ClientsService.js'
+import AgendaService from '@/modules/agenda/AgendaService'
+import dayjs from 'dayjs'
 
 // import ClientsAnotationsTable from './ClientsAnotationsTable.vue'
 export default {
@@ -14,6 +17,7 @@ export default {
     return {
       dialogClientModal: false,
       newClient: false,
+      loading: false,
       item: {
         client_name: '',
         start_date: '',
@@ -96,7 +100,9 @@ export default {
       this.dialogClientModal = false
     },
     formatClientData () {
-      this.item = {
+      const newID = uuid.v1()
+      return {
+        id: newID,
         client_name: this.item.client_name,
         start_date: this.item.start_date,
         payment_value: parseFloat(this.item.payment_value),
@@ -105,31 +111,67 @@ export default {
     },
     formatSessionData (client) {
       const newSession = {
-        clientId: client.clientId,
-        start: this.item.start_date,
-        end: this.item.start_date,
-        session_value: parseFloat(this.item.payment_value),
+        clientId: client.id,
+        start: client.start_date,
+        end: dayjs(client.start_date).add(1, 'hour').format('YYYY-MM-DD HH:mm:ss'),
+        session_value: parseFloat(client.payment_value),
         confirmation: false,
         attended: false,
         payed: false,
         details: '',
-        frequency: this.item.frequency,
-        color: ''
+        frequency: client.frequency,
+        color: '#18b2b0'
       }
 
       return newSession
     },
-    async saveNewClient () {
+    async saveNewSession (newSession) {
       try {
-        this.formatClientData()
-        await ClientsService.save(this.item)
-        console.log(this.item)
+        const saveSessions = async (iterations, increment, unit) => {
+          const date = dayjs(newSession.start)
+          for (let i = 0; i < iterations; i++) {
+            const newDate = date.add(i * increment, unit)
+            const startDate = newDate.format('YYYY-MM-DD HH:mm:ss')
+            const endDate = newDate.add(1, 'hour').format('YYYY-MM-DD HH:mm:ss')
+            const session = { ...newSession, start: startDate, end: endDate }
+            await AgendaService.save(session)
+          }
+        }
+
+        if (newSession.frequency === 'weekly') {
+          await saveSessions(8, 1, 'week')
+        } else if (newSession.frequency === 'biweekly') {
+          await saveSessions(4, 2, 'week')
+        } else if (newSession.frequency === 'monthly') {
+          await saveSessions(2, 28, 'day')
+        } else {
+          await AgendaService.save(newSession)
+        }
       } catch (error) {
         console.error('Erro ao salvar: ', error)
+      }
+    },
+    async saveNewClient () {
+      try {
+        const newClient = this.formatClientData()
+        await ClientsService.save(newClient)
+        this.item = {
+          ...this.item,
+          id: newClient.id
+        }
+        const newSession = this.formatSessionData(this.item)
+        console.log(newSession)
+        await this.saveNewSession(newSession)
+
+        this.$emit('snackbarSucessClients')
+      } catch (e) {
+        console.error('Erro ao salvar: ', e)
+        this.$emit('snackbarFailureClients')
       } finally {
         this.addNewClient(this.item)
         this.closeModal()
         this.$emit('update')
+        this.$emit('snackbarSucessClients')
       }
     }
   }
@@ -198,6 +240,7 @@ export default {
             <v-btn
               color="#0B132B"
               class="align-self-end white--text"
+              :loading="loading"
               @click="saveNewClient"
             >
               Salvar
