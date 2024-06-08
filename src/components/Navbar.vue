@@ -9,7 +9,6 @@ export default {
           { title: 'Agenda', icon: 'mdi-calendar', path:"/agenda" },
           { title: 'Clientes', icon: 'mdi-account', path:"/clientes" },
           { title: 'Financeiro', icon: 'mdi-currency-usd', path:"/financeiro" },
-          // { title: 'Arquivos', icon: 'mdi-folder-text', path:"/arquivos" },
         ],
     }
   }
@@ -44,6 +43,6 @@ export default {
 
 <style scoped>
 .hover-item:hover {
-  background-color: #2c3e50; /* Change to your desired hover background color */
+  background-color: #2c3e50;
 }
 </style>

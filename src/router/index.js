@@ -4,7 +4,6 @@ import AgendaView from '../modules/agenda/AgendaView'
 import DashboardView from '../modules/dashboard/DashboardView'
 import ClientsView from '../modules/clients/ClientsView'
 import FinancesView from '../modules/finances/FinancesView'
-import FilesView from '../modules/files/FilesView'
 import LoginView from '../modules/login/LoginView'
 import SignUpView from '../modules/signup/SignUpView'
 
@@ -30,11 +29,6 @@ const routes = [
     path: '/financeiro',
     name: 'financeiro',
     component: FinancesView
-  },
-  {
-    path: '/arquivos',
-    name: 'arquivos',
-    component: FilesView
   },
   {
     path: '/cadastro',

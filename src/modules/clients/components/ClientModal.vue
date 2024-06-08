@@ -7,11 +7,9 @@ import ClientsService from '../ClientsService.js'
 import AgendaService from '@/modules/agenda/AgendaService'
 import dayjs from 'dayjs'
 
-// import ClientsAnotationsTable from './ClientsAnotationsTable.vue'
 export default {
   components: {
     BaseModal
-    // ClientsAnotationsTable
   },
   data () {
     return {
@@ -41,28 +39,6 @@ export default {
         {
           text: 'Mensal',
           value: 'monthly'
-        }
-      ],
-      headers: [
-        {
-          text: '',
-          value: 'client_name',
-          align: 'd-none'
-        },
-        {
-          text: 'Data da sessão',
-          value: 'session_date',
-          align: 'center'
-        },
-        {
-          text: 'Horário da sessão',
-          value: 'session_time',
-          align: 'center'
-        },
-        {
-          text: 'Anotações',
-          value: 'file_records',
-          align: 'center'
         }
       ],
       items: []
@@ -247,12 +223,5 @@ export default {
             </v-btn>
           </v-container>
       </template>
-      <template #modal-content>
-        <!-- <ClientsAnotationsTable :headers="headers" :items="items" class="mt-10"/> -->
-      </template>
     </BaseModal>
 </template>
-
-<style>
-
-</style>

@@ -101,17 +101,6 @@ export default {
                   @click="updateSession(item)"
               ></v-checkbox>
             </template>
-            <!-- <template v-slot:item.anotations>
-                <div class="d-flex justify-content-center">
-                    <v-btn
-                        small
-                        rounded
-                        color="#83cfcb"
-                    >
-                        <v-icon>mdi-file-document-edit-outline</v-icon>
-                    </v-btn>
-                </div>
-            </template> -->
         </v-data-table>
     </div>
 </template>

@@ -36,10 +36,6 @@ export default {
                 <slot name="modal-title" />
               </v-card-title>
               <slot name="modal-header"/>
-
-                <!-- <v-card-text>
-                    <slot name="modal-content" />
-                </v-card-text> -->
             </v-card>
         </v-card>
     </v-dialog>

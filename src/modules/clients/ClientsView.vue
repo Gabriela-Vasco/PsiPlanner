@@ -2,7 +2,6 @@
 import { mapActions, mapGetters } from 'vuex'
 import ClientsTable from '@/modules/clients/components/ClientsTable.vue'
 import ClientModal from './components/ClientModal.vue'
-import ClientsAnotationsModal from './components/ClientsAnotationsModal.vue'
 import { EventBus } from '@/utils/EventBus.js'
 import ClientsService from './ClientsService.js'
 
@@ -10,8 +9,7 @@ export default {
   name: 'ClientsView',
   components: {
     ClientsTable,
-    ClientModal,
-    ClientsAnotationsModal
+    ClientModal
   },
   data () {
     return {
@@ -45,11 +43,6 @@ export default {
           value: 'actions',
           align: 'center'
         }
-        // {
-        //   text: 'Histórico',
-        //   value: 'psychological_records',
-        //   align: 'center'
-        // }
       ]
     }
   },
@@ -125,7 +118,6 @@ export default {
       @snackbarSucessClients="snackbarSuccessClients = true"
       @snackbarFailureClients="snackbarFailureClients = true"
     />
-    <ClientsAnotationsModal />
   </div>
 </template>
 

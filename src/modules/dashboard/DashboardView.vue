@@ -49,11 +49,6 @@ export default {
           value: 'attended',
           width: '140px'
         }
-        // {
-        //   text: 'Anotações',
-        //   value: 'anotations',
-        //   align: 'center'
-        // }
       ]
     }
   },
