@@ -5,7 +5,6 @@ import dayjs from 'dayjs'
 
 export default {
   async save (client) {
-    console.log(client)
     await setDoc(doc(db, 'clients', client.id), {
       id: client.id,
       active: client.active,
@@ -20,7 +19,7 @@ export default {
     const querySnapshot = await getDocs(collection(db, 'clients'))
     querySnapshot.forEach((doc) => {
       const client = {
-        id: doc.data().id,
+        id: doc.id,
         active: doc.data().active,
         client_name: doc.data().client_name,
         start_date: doc.data().start_date,

@@ -1,9 +1,16 @@
 <script>
+import { mapActions } from 'vuex'
 import BillsToReceiveTable from '@/modules/finances/components/BillsToReceiveTable.vue'
+import ClientsService from '@/modules/clients/ClientsService.js'
 import { EventBus } from '@/utils/EventBus.js'
+
 export default {
+
   components: {
     BillsToReceiveTable
+  },
+  props: {
+    billsToReceive: { type: Array, default: () => [] }
   },
 
   data () {
@@ -11,7 +18,7 @@ export default {
       headers: [
         {
           text: 'Cliente',
-          value: 'client',
+          value: 'id_client',
           align: 'center'
         },
         {
@@ -26,21 +33,37 @@ export default {
         },
         {
           text: 'Valor',
-          value: 'value',
-          align: 'center'
+          value: 'value'
         },
         {
           text: 'Situação',
-          value: 'active',
+          value: 'situation'
+        },
+        {
+          text: 'Ações',
+          value: 'actions',
           align: 'center'
         }
-      ],
-      items: []
+      ]
     }
   },
+
+  mounted () {
+    this.fetchClients()
+  },
+
   methods: {
+    ...mapActions(['setClients']),
     openModal () {
-      EventBus.$emit('openFinanceModal')
+      EventBus.$emit('openFinanceModal', { item: {}, type: 'billToReceive' })
+    },
+    async fetchClients () {
+      try {
+        const data = await ClientsService.list()
+        this.setClients(data)
+      } catch (error) {
+        console.error('Erro ao buscar dados, ', error)
+      }
     }
   }
 }
@@ -58,8 +81,11 @@ export default {
           Nova conta a receber
         </v-btn>
         <BillsToReceiveTable
-            :items='items'
-            :headers='headers'
+          :items='billsToReceive'
+          :headers='headers'
+          @reloadBillsToReceive="$emit('reloadBillsToReceive')"
+          @snackbarSucess="$emit('snackbarSucess')"
+          @snackbarFailure="$emit('snackbarFailure')"
         />
     </div>
 </template>

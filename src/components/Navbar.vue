@@ -1,18 +1,16 @@
 <script>
-/* eslint-disable */
 export default {
   name: 'NavbarView',
-  data(){
+  data () {
     return {
       items: [
-          { title: 'Dashboard', icon: 'mdi-home', path: '/' },
-          { title: 'Agenda', icon: 'mdi-calendar', path:"/agenda" },
-          { title: 'Clientes', icon: 'mdi-account', path:"/clientes" },
-          { title: 'Financeiro', icon: 'mdi-currency-usd', path:"/financeiro" },
-        ],
+        { title: 'Dashboard', icon: 'mdi-home', path: '/' },
+        { title: 'Agenda', icon: 'mdi-calendar', path: '/agenda' },
+        { title: 'Clientes', icon: 'mdi-account', path: '/clientes' },
+        { title: 'Financeiro', icon: 'mdi-currency-usd', path: '/financeiro' }
+      ]
     }
   }
-
 }
 </script>
 
@@ -24,9 +22,10 @@ export default {
         class="bg-primary-dark"
       >
       <v-list-item
-      v-for="item in items"
-      :key="item.title"
-      class="my-4 py-1 hover-item"
+        v-for="item in items"
+        :key="item.title"
+        class="my-4 py-1 hover-item"
+        :style="$route.path === item.path ? 'background-color: #2c3e50' : ''"
       >
       <v-list-item-content >
           <router-link :to="item.path" class="d-flex">

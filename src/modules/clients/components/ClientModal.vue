@@ -41,7 +41,8 @@ export default {
           value: 'monthly'
         }
       ],
-      items: []
+      items: [],
+      saveSessions: false
     }
   },
   created () {
@@ -135,8 +136,10 @@ export default {
           ...this.item,
           id: newClient.id
         }
+        if (!this.saveSessions) {
+          return
+        }
         const newSession = this.formatSessionData(this.item)
-        console.log(newSession)
         await this.saveNewSession(newSession)
 
         this.$emit('snackbarSucessClients')
@@ -210,6 +213,14 @@ export default {
                   v-model="item.active"
                   color="#0B132B"
                   label="Cliente ativo"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="10" class="mt-0 mb-5py-0">
+                <v-checkbox
+                  v-model="saveSessions"
+                  color="#0B132B"
+                  class=''
+                  label="Cadastrar sessões para esse cliente com base nas informações acima?"
                 ></v-checkbox>
               </v-col>
             </v-row>

@@ -42,11 +42,7 @@ export default {
       }
     }
   },
-  watch: {
-    item () {
-      console.log(this.item)
-    }
-  },
+
   created () {
     EventBus.$on('openAgendaModal', this.openModal)
   },

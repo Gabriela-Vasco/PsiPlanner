@@ -1,4 +1,8 @@
 <script>
+import dayjs from 'dayjs'
+import { EventBus } from '@/utils/EventBus'
+import FinancesService from '../FinancesService'
+
 export default {
   props: {
     headers: {
@@ -10,18 +14,95 @@ export default {
   },
   data () {
     return {
-
+      paymentSituations: {
+        pending: 'Pendente',
+        paid: 'Pago',
+        late: 'Atrasado'
+      },
+      paymentSituationsColors: {
+        pending: 'orange',
+        paid: 'green',
+        late: 'red'
+      }
+    }
+  },
+  methods: {
+    editItem (item) {
+      EventBus.$emit('openFinanceModal', { item: item, type: 'billToPay' })
+    },
+    async deleteItem (bill) {
+      try {
+        await FinancesService.deleteBillToPay(bill)
+        this.$emit('snackbarSucess')
+      } catch (e) {
+        console.error(e)
+        this.$emit('snackbarFailure')
+      } finally {
+        this.$emit('reloadBillsToPay')
+      }
+    },
+    formatMoney (value) {
+      return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+    },
+    formatDate (date) {
+      if (date) {
+        return dayjs(date)?.$d?.toLocaleDateString()
+      }
     }
   }
 }
 </script>
 <template>
     <div class='mx-10'>
+      <!-- eslint-disable vue/valid-v-slot -->
         <v-data-table
             class="data-table"
             :headers="headers"
             :items="items"
         >
-        </v-data-table>
+          <template v-slot:item.provider="{ item }">
+            {{ item.provider || ' - ' }}
+          </template>
+          <template v-slot:item.due_date="{ item }">
+              {{ formatDate(item.due_date) || ' - ' }}
+          </template>
+          <template v-slot:item.payment_date="{ item }">
+            {{ formatDate(item.payment_date) || ' - ' }}
+          </template>
+          <template v-slot:item.value="{ item }">
+            {{ formatMoney(item.value) || ' - ' }}
+          </template>
+          <template v-slot:item.situation="{ item }">
+            <span>
+              <v-chip
+                  :color="paymentSituationsColors[item.situation]"
+                  text-color="white"
+              >
+                  {{ paymentSituations[item.situation] || ' - ' }}
+              </v-chip>
+            </span>
+          </template>
+          <template v-slot:item.actions="{ item }">
+            <v-btn
+              icon
+              class="mr-2"
+              color="blue darken-2"
+              @click="editItem(item)"
+            >
+              <v-icon>
+              mdi-pencil
+              </v-icon>
+            </v-btn>
+            <v-btn
+            icon
+              color="red darken-1"
+              @click="deleteItem(item)"
+            >
+              <v-icon>
+                mdi-delete
+              </v-icon>
+            </v-btn>
+          </template>
+      </v-data-table>
     </div>
 </template>

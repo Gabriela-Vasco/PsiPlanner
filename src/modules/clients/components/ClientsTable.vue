@@ -1,6 +1,8 @@
 <script>
 import { EventBus } from '@/utils/EventBus.js'
 import ClientsService from '../ClientsService.js'
+import AgendaService from '@/modules/agenda/AgendaService.js'
+import FinancesService from '@/modules/finances/FinancesService.js'
 
 export default {
   props: {
@@ -28,6 +30,26 @@ export default {
         this.item = {
           ...item,
           loading: true
+        }
+        const sessions = await AgendaService.list()
+        const sessionsToDelete = sessions.filter(session => session.clientId === item.id)
+
+        const billsToReceive = await FinancesService.listBillsToReceive()
+        const billsToDelete = billsToReceive.filter(bill => bill.id_client === item.id)
+        try {
+          if (sessionsToDelete.length > 0) {
+            sessionsToDelete.forEach(async session => {
+              await AgendaService.delete(session.id)
+            })
+          }
+
+          if (billsToDelete.length > 0) {
+            billsToDelete.forEach(async bill => {
+              await FinancesService.deleteBillToReceive(bill)
+            })
+          }
+        } catch (e) {
+          console.error('Erro ao deletar sessões: ', e)
         }
         await ClientsService.delete(item)
       } catch (e) {
@@ -86,7 +108,7 @@ export default {
             </template>
             <template v-slot:item.payment_value="{ item }">
               {{ formatMoney(item.payment_value) || ' - ' }}
-          </template>
+            </template>
             <template v-slot:item.active="{ item }">
                 <v-checkbox
                   v-model="item.active"
@@ -96,29 +118,52 @@ export default {
                 />
             </template>
             <template v-slot:item.actions="{ item }">
-                <v-btn
-                  small
-                  rounded
-                  icon
-                  color="red darken-1"
-                  :loading="item.loading"
-                  @click="deleteClient(item)"
-                >
-                    <v-icon>mdi-delete</v-icon>
-                </v-btn>
-            </template>
-            <!-- <template v-slot:item.psychological_records="{ item }">
-                <div class="d-flex justify-content-center">
+              <v-dialog
+                v-model="selectedOpen"
+                max-width="350"
+              >
+                <template v-slot:activator="{ on }">
                   <v-btn
-                  small
-                  rounded
-                  color="#83cfcb"
-                  @click="openModal(item)"
+                    small
+                    rounded
+                    icon
+                    v-on="on"
+                    color="red darken-1"
+                    @click="selectedOpen = true"
                   >
-                    <v-icon>mdi-file-cabinet</v-icon>
-                </v-btn>
-                </div>
-            </template> -->
+                    <v-icon>mdi-delete</v-icon>
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title class="headline">Remover cliente</v-card-title>
+                  <v-card-text>
+                    <p>
+                      Tem certeza que deseja excluir este cliente?
+                    </p>
+                    <p>
+                      Essa ação excluirá todas as sessões e contas a receber associadas a ele.
+                    </p>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn
+                      color="neutral"
+                      text
+                      @click="selectedOpen = false"
+                    >
+                      Cancelar
+                    </v-btn>
+                    <v-btn
+                      color="red darken-1"
+                      text
+                      outlined
+                      @click="deleteClient(item)"
+                    >
+                      Deletar
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </template>
         </v-data-table>
     </div>
 </template>

@@ -1,10 +1,13 @@
 <script>
 import BillsToPayTable from '@/modules/finances/components/BillsToPayTable.vue'
-import { EventBus } from '@/utils/EventBus.js'
+import { EventBus } from '@/utils/EventBus'
 
 export default {
   components: {
     BillsToPayTable
+  },
+  props: {
+    billsToPay: { type: Array, default: () => [] }
   },
 
   data () {
@@ -27,21 +30,23 @@ export default {
         },
         {
           text: 'Valor',
-          value: 'value',
-          align: 'center'
+          value: 'value'
         },
         {
           text: 'Situação',
-          value: 'active',
+          value: 'situation'
+        },
+        {
+          text: 'Ações',
+          value: 'actions',
           align: 'center'
         }
-      ],
-      items: []
+      ]
     }
   },
   methods: {
     openModal () {
-      EventBus.$emit('openFinanceModal')
+      EventBus.$emit('openFinanceModal', { item: {}, type: 'billToPay' })
     }
   }
 }
@@ -59,8 +64,11 @@ export default {
           Nova conta a pagar
         </v-btn>
         <BillsToPayTable
-            :items='items'
+            :items='billsToPay'
             :headers='headers'
+            @reloadBillsToPay="$emit('reloadBillsToPay')"
+            @snackbarSucess="$emit('snackbarSucess')"
+            @snackbarFailure="$emit('snackbarFailure')"
         />
     </div>
 </template>
