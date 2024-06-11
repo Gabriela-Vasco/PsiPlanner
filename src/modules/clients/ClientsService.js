@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 
 export default {
   async save (client) {
+    console.log(client)
     await setDoc(doc(db, 'clients', client.id), {
       id: client.id,
       active: client.active,
